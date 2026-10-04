@@ -1,6 +1,9 @@
 @import "https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap";
 /* [project]/app/globals.css [app-client] (css) */
 :root {
+  --lightningcss-light: initial;
+  --lightningcss-dark: ;
+  color-scheme: light;
   --ink: #202b25;
   --muted: #7c8980;
   --green: #286b50;
@@ -787,7 +790,12 @@ footer span:first-child {
 }
 
 .sentence-answer button {
-  cursor: default;
+  cursor: pointer;
+}
+
+.sentence-answer button:hover {
+  background: #eaf4e9;
+  border-color: #a7c5aa;
 }
 
 .language-card.japanese {
@@ -1260,6 +1268,118 @@ footer span:first-child {
   .page-intro {
     padding: 28px 0 12px;
   }
+}
+
+:root[data-theme="dark"] {
+  --lightningcss-light: ;
+  --lightningcss-dark: initial;
+  color-scheme: dark;
+  --ink: #e8eee9;
+  --muted: #a0ada4;
+  --green: #91c8a5;
+  --mint: #183021;
+  --line: #303030;
+  --paper: #000;
+  --orange: #e19a70;
+}
+
+:root[data-theme="dark"] body {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+:root[data-theme="dark"] .topbar, :root[data-theme="dark"] .workspace, :root[data-theme="dark"] .exercise, :root[data-theme="dark"] .language-card, :root[data-theme="dark"] .import-panel {
+  color: var(--ink);
+  background: #0b0b0b;
+}
+
+:root[data-theme="dark"] .language-card.english, :root[data-theme="dark"] .prompt-card, :root[data-theme="dark"] .practice-bar, :root[data-theme="dark"] .selection-tools, :root[data-theme="dark"] .add-form, :root[data-theme="dark"] .answer-example {
+  background: #111;
+  border-color: #303030;
+}
+
+:root[data-theme="dark"] .language-card.japanese, :root[data-theme="dark"] .language-icon {
+  background: #151515;
+}
+
+:root[data-theme="dark"] .button.outline, :root[data-theme="dark"] .option, :root[data-theme="dark"] .selection-tabs button, :root[data-theme="dark"] .random-picks > button:not(.button), :root[data-theme="dark"] .random-picker .random-picks input, :root[data-theme="dark"] .add-form input, :root[data-theme="dark"] .type-answer input, :root[data-theme="dark"] .sentence-answer button, :root[data-theme="dark"] .token-tray button {
+  color: var(--ink);
+  background: #171717;
+  border-color: #383838;
+}
+
+:root[data-theme="dark"] .selection-tabs button.selected, :root[data-theme="dark"] .random-picker .random-picks > button.selected {
+  color: #b5dfbf;
+  background: #193123;
+}
+
+:root[data-theme="dark"] .result.good, :root[data-theme="dark"] .feedback-panel.correct {
+  color: #b5dfbf;
+  background: #183021;
+}
+
+:root[data-theme="dark"] .result.bad, :root[data-theme="dark"] .feedback-panel.incorrect {
+  color: #ffd0c2;
+  background: #321b17;
+}
+
+:root[data-theme="dark"] .option.correct {
+  color: #b5dfbf;
+  background: #183021;
+}
+
+:root[data-theme="dark"] .option.wrong {
+  color: #ffd0c2;
+  background: #321b17;
+}
+
+:root[data-theme="dark"] .import-content code {
+  color: #b5dfbf;
+  background: #18251d;
+}
+
+:root[data-theme="dark"] .import-success {
+  color: #b5dfbf;
+  background: #183021;
+}
+
+:root[data-theme="dark"] .import-error {
+  color: #ffd0c2;
+  background: #321b17;
+}
+
+:root[data-theme="dark"] .language-switch button:disabled {
+  color: #a0ada4;
+  background: #151515;
+}
+
+:root[data-theme="dark"] .language-switch .language-active {
+  color: #b5dfbf;
+  background: #183021;
+}
+
+.theme-toggle {
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 7px;
+  padding: 8px 11px;
+  font-size: .73rem;
+  font-weight: 700;
+}
+
+@media (max-width: 700px) {
+  .theme-toggle {
+    margin-left: auto;
+  }
+}
+
+:root[data-theme="dark"] .add-form label, :root[data-theme="dark"] .type-answer label {
+  color: var(--ink);
+}
+
+:root[data-theme="dark"] .word-main p, :root[data-theme="dark"] .section-title > p, :root[data-theme="dark"] .word-main small:not(.pronunciation), :root[data-theme="dark"] .add-form small, :root[data-theme="dark"] .language-card p:not(.eyebrow), :root[data-theme="dark"] .exercise-hint, :root[data-theme="dark"] .import-content > p {
+  color: var(--muted);
 }
 
 /*# sourceMappingURL=app_globals_0yg4wg8.css.map*/

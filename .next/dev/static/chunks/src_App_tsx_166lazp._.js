@@ -18,6 +18,8 @@ const STORAGE_KEY = 'kotoba-en-cards-v1';
 const WORD_PACK_MARKER_KEY = 'kotoba-en-wildlife-pack-v1-installed';
 const CAREER_PACK_MARKER_KEY = 'kotoba-en-career-pack-v1-installed';
 const GENERAL_PACK_MARKER_KEY = 'kotoba-en-general-pack-v1-installed';
+const PRACTICE_SESSION_KEY = 'kotoba-en-practice-session-v1';
+const THEME_KEY = 'kotoba-en-theme-v1';
 const WORDS_PER_PAGE = 10;
 const starterWords = [
     {
@@ -439,9 +441,12 @@ function App() {
     const [sentenceExpected, setSentenceExpected] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
     const [sentenceCheck, setSentenceCheck] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
     const [choiceOrder, setChoiceOrder] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [theme, setTheme] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('light');
+    const [practiceRecoveryMessage, setPracticeRecoveryMessage] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('Loading your English practice…');
     const pathname = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["usePathname"])();
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
     const isRandomPicker = pathname === '/english/random';
+    const isPracticePage = pathname === '/english/practice';
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "App.useEffect": ()=>{
             let existingCards = [];
@@ -515,6 +520,82 @@ function App() {
         cards,
         loaded,
         storageReady
+    ]);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "App.useEffect": ()=>{
+            let saved = null;
+            try {
+                saved = localStorage.getItem(THEME_KEY);
+            } catch  {}
+            const preference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            setTheme(saved === 'dark' || saved === 'light' ? saved : preference);
+        }
+    }["App.useEffect"], []);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "App.useEffect": ()=>{
+            document.documentElement.dataset.theme = theme;
+        }
+    }["App.useEffect"], [
+        theme
+    ]);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "App.useEffect": ()=>{
+            if (!isPracticePage) return;
+            if (!loaded) {
+                setPracticeRecoveryMessage('Loading your English practice…');
+                return;
+            }
+            if (!storageReady) {
+                setMode('idle');
+                setPracticeRecoveryMessage('Your vocabulary could not be loaded, so this practice session cannot be restored.');
+                return;
+            }
+            try {
+                const raw = sessionStorage.getItem(PRACTICE_SESSION_KEY);
+                const saved = raw ? JSON.parse(raw) : null;
+                const savedIds = saved?.ids;
+                const ids = Array.isArray(savedIds) ? savedIds.filter({
+                    "App.useEffect": (id)=>typeof id === 'string'
+                }["App.useEffect"]) : [];
+                const deck = ids.map({
+                    "App.useEffect.deck": (id)=>cards.find({
+                            "App.useEffect.deck": (card)=>card.id === id
+                        }["App.useEffect.deck"])
+                }["App.useEffect.deck"]).filter({
+                    "App.useEffect.deck": (card)=>!!card
+                }["App.useEffect.deck"]);
+                if (!Array.isArray(savedIds) || ids.length !== savedIds.length || !deck.length || deck.length !== ids.length || saved?.mode !== 'choice' && saved?.mode !== 'typing') {
+                    setMode('idle');
+                    setPracticeRecoveryMessage('This practice session is missing or out of date. Return to English practice and choose a deck again.');
+                    return;
+                }
+                setSelected(deck.map({
+                    "App.useEffect": (card)=>card.id
+                }["App.useEffect"]));
+                setSessionCards(deck);
+                setSentenceCards(deck.filter({
+                    "App.useEffect": (card)=>card.example.trim()
+                }["App.useEffect"]));
+                setMode(saved.mode);
+                setQuestionIndex(0);
+                setScore(0);
+                setAnswer('');
+                setFeedback(null);
+                setSentenceAnswer([]);
+                setSentenceCheck(null);
+                if (saved.mode === 'choice') prepareChoices(0, deck);
+                setPracticeRecoveryMessage('');
+            } catch  {
+                setMode('idle');
+                setPracticeRecoveryMessage('This practice session could not be restored. Return to English practice and choose a deck again.');
+            }
+        // Restore saved deck after client-side navigation or refresh.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        }
+    }["App.useEffect"], [
+        loaded,
+        storageReady,
+        isPracticePage
     ]);
     const activeCards = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
         "App.useMemo[activeCards]": ()=>selected.map({
@@ -613,6 +694,13 @@ function App() {
         setChoiceOrder(choices.sort(()=>Math.random() - 0.5).map((card)=>card.id));
     };
     const beginPractice = (nextMode, deck)=>{
+        if (!deck.length) return;
+        try {
+            sessionStorage.setItem(PRACTICE_SESSION_KEY, JSON.stringify({
+                ids: deck.map((card)=>card.id),
+                mode: nextMode
+            }));
+        } catch  {}
         setMode(nextMode);
         setQuestionIndex(0);
         setScore(0);
@@ -625,6 +713,7 @@ function App() {
         setSentenceCards(deck.filter((card)=>card.example.trim()));
         if (nextMode === 'choice') prepareChoices(0, deck);
         if (nextMode === 'typing') setChoiceOrder([]);
+        router.push('/english/practice');
     };
     const begin = (nextMode)=>beginPractice(nextMode, activeCards);
     const startRandomPractice = (requested, nextMode)=>{
@@ -661,7 +750,7 @@ function App() {
         setMode('idle');
         setSelectionMode('manual');
         setSelectionMessage('');
-        if (isRandomPicker) router.push('/');
+        if (isRandomPicker || isPracticePage) router.push('/');
     };
     const chooseRandomCount = (count)=>{
         setRandomCount(String(count));
@@ -747,6 +836,23 @@ function App() {
         setSentenceAnswer([]);
         setSentenceCheck(null);
     };
+    const removeSentenceToken = (index)=>{
+        const token = sentenceAnswer[index];
+        if (token === undefined) return;
+        setSentenceAnswer((items)=>items.filter((_, i)=>i !== index));
+        setSentenceTokens((items)=>[
+                ...items,
+                token
+            ]);
+        setSentenceCheck(null);
+    };
+    const toggleTheme = ()=>{
+        const nextTheme = theme === 'light' ? 'dark' : 'light';
+        setTheme(nextTheme);
+        try {
+            localStorage.setItem(THEME_KEY, nextTheme);
+        } catch  {}
+    };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "shell",
         children: [
@@ -755,21 +861,24 @@ function App() {
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
                         className: "logo",
-                        href: "#home",
-                        onClick: backToEnglish,
+                        href: "/",
+                        onClick: (event)=>{
+                            event.preventDefault();
+                            backToEnglish();
+                        },
                         children: [
                             "word",
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 children: "craft"
                             }, void 0, false, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 351,
-                                columnNumber: 93
+                                lineNumber: 411,
+                                columnNumber: 130
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/App.tsx",
-                        lineNumber: 351,
+                        lineNumber: 411,
                         columnNumber: 32
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("nav", {
@@ -781,8 +890,8 @@ function App() {
                                 children: "English"
                             }, void 0, false, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 351,
-                                columnNumber: 179
+                                lineNumber: 411,
+                                columnNumber: 216
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                 type: "button",
@@ -791,33 +900,45 @@ function App() {
                                 children: "Japanese · Temporarily unavailable"
                             }, void 0, false, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 351,
-                                columnNumber: 227
+                                lineNumber: 411,
+                                columnNumber: 264
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/App.tsx",
-                        lineNumber: 351,
-                        columnNumber: 115
+                        lineNumber: 411,
+                        columnNumber: 152
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                        className: "theme-toggle",
+                        type: "button",
+                        onClick: toggleTheme,
+                        "aria-label": `Switch to ${theme === 'light' ? 'dark' : 'light'} theme`,
+                        "aria-pressed": theme === 'dark',
+                        children: theme === 'light' ? '☾ Dark' : '☀ Light'
+                    }, void 0, false, {
+                        fileName: "[project]/src/App.tsx",
+                        lineNumber: 411,
+                        columnNumber: 365
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                         className: "local-note",
                         children: "Your vocabulary stays on this device"
                     }, void 0, false, {
                         fileName: "[project]/src/App.tsx",
-                        lineNumber: 351,
-                        columnNumber: 328
+                        lineNumber: 411,
+                        columnNumber: 588
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/App.tsx",
-                lineNumber: 351,
+                lineNumber: 411,
                 columnNumber: 5
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
                 id: "home",
                 children: [
-                    isRandomPicker ? mode === 'idle' ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
+                    isPracticePage ? null : isRandomPicker ? mode === 'idle' ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
                         className: "exercise random-picker",
                         "aria-labelledby": "random-title",
                         children: [
@@ -827,7 +948,7 @@ function App() {
                                 children: "← Back to English practice"
                             }, void 0, false, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 354,
+                                lineNumber: 414,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -835,7 +956,7 @@ function App() {
                                 children: "Random practice · full English deck"
                             }, void 0, false, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 355,
+                                lineNumber: 415,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
@@ -843,7 +964,7 @@ function App() {
                                 children: "Pick a random deck"
                             }, void 0, false, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 355,
+                                lineNumber: 415,
                                 columnNumber: 71
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -854,7 +975,7 @@ function App() {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 356,
+                                lineNumber: 416,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -864,7 +985,7 @@ function App() {
                                         children: "Word count"
                                     }, void 0, false, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 357,
+                                        lineNumber: 417,
                                         columnNumber: 39
                                     }, this),
                                     [
@@ -879,7 +1000,7 @@ function App() {
                                             children: count
                                         }, count, false, {
                                             fileName: "[project]/src/App.tsx",
-                                            lineNumber: 357,
+                                            lineNumber: 417,
                                             columnNumber: 95
                                         }, this)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
@@ -896,19 +1017,19 @@ function App() {
                                                 }
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 358,
+                                                lineNumber: 418,
                                                 columnNumber: 30
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 358,
+                                        lineNumber: 418,
                                         columnNumber: 11
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 357,
+                                lineNumber: 417,
                                 columnNumber: 9
                             }, this),
                             selectionMessage && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -917,7 +1038,7 @@ function App() {
                                 children: selectionMessage
                             }, void 0, false, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 360,
+                                lineNumber: 420,
                                 columnNumber: 30
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -932,27 +1053,27 @@ function App() {
                                                 children: "Choose an answer"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 361,
+                                                lineNumber: 421,
                                                 columnNumber: 244
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("small", {
                                                 children: "Multiple choice · needs at least 2 words"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 361,
+                                                lineNumber: 421,
                                                 columnNumber: 267
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                 children: "→"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 361,
+                                                lineNumber: 421,
                                                 columnNumber: 322
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 361,
+                                        lineNumber: 421,
                                         columnNumber: 56
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -964,40 +1085,40 @@ function App() {
                                                 children: "Write an answer"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 361,
+                                                lineNumber: 421,
                                                 columnNumber: 533
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("small", {
                                                 children: "Recall from memory"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 361,
+                                                lineNumber: 421,
                                                 columnNumber: 555
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                 children: "→"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 361,
+                                                lineNumber: 421,
                                                 columnNumber: 588
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 361,
+                                        lineNumber: 421,
                                         columnNumber: 345
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 361,
+                                lineNumber: 421,
                                 columnNumber: 9
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/App.tsx",
-                        lineNumber: 353,
-                        columnNumber: 43
+                        lineNumber: 413,
+                        columnNumber: 67
                     }, this) : null : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -1008,27 +1129,27 @@ function App() {
                                         children: "English practice"
                                     }, void 0, false, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 363,
+                                        lineNumber: 423,
                                         columnNumber: 39
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
                                         children: "Your vocabulary deck"
                                     }, void 0, false, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 363,
+                                        lineNumber: 423,
                                         columnNumber: 82
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                         children: "Choose words, practise their meanings, then match the example sentences."
                                     }, void 0, false, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 363,
+                                        lineNumber: 423,
                                         columnNumber: 111
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 363,
+                                lineNumber: 423,
                                 columnNumber: 7
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -1045,7 +1166,7 @@ function App() {
                                                         children: "English learning space"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 365,
+                                                        lineNumber: 425,
                                                         columnNumber: 45
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -1056,32 +1177,32 @@ function App() {
                                                                 children: cards.length
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 365,
+                                                                lineNumber: 425,
                                                                 columnNumber: 135
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 365,
+                                                        lineNumber: 425,
                                                         columnNumber: 94
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 365,
+                                                lineNumber: 425,
                                                 columnNumber: 40
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                 children: "Select the words you want to practise. Sentence exercises use their example sentences."
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 365,
+                                                lineNumber: 425,
                                                 columnNumber: 173
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 365,
+                                        lineNumber: 425,
                                         columnNumber: 9
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -1097,13 +1218,13 @@ function App() {
                                                         placeholder: "e.g. resilient"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 367,
+                                                        lineNumber: 427,
                                                         columnNumber: 22
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 367,
+                                                lineNumber: 427,
                                                 columnNumber: 11
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
@@ -1115,13 +1236,13 @@ function App() {
                                                         placeholder: "e.g. able to recover quickly"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 368,
+                                                        lineNumber: 428,
                                                         columnNumber: 25
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 368,
+                                                lineNumber: 428,
                                                 columnNumber: 11
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
@@ -1131,7 +1252,7 @@ function App() {
                                                         children: "IPA, optional"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 368,
+                                                        lineNumber: 428,
                                                         columnNumber: 173
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1140,13 +1261,13 @@ function App() {
                                                         placeholder: "/prəˌnʌn.siˈeɪ.ʃən/"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 368,
+                                                        lineNumber: 428,
                                                         columnNumber: 201
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 368,
+                                                lineNumber: 428,
                                                 columnNumber: 152
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
@@ -1157,7 +1278,7 @@ function App() {
                                                         children: "needed for sentence-building practice"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 369,
+                                                        lineNumber: 429,
                                                         columnNumber: 61
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1166,13 +1287,13 @@ function App() {
                                                         placeholder: "She stayed resilient through the challenge."
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 369,
+                                                        lineNumber: 429,
                                                         columnNumber: 113
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 369,
+                                                lineNumber: 429,
                                                 columnNumber: 11
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1185,19 +1306,19 @@ function App() {
                                                         children: "＋"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 370,
+                                                        lineNumber: 430,
                                                         columnNumber: 115
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 370,
+                                                lineNumber: 430,
                                                 columnNumber: 11
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 366,
+                                        lineNumber: 426,
                                         columnNumber: 9
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("details", {
@@ -1207,7 +1328,7 @@ function App() {
                                                 children: "Import a deck from JSON or CSV"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 372,
+                                                lineNumber: 432,
                                                 columnNumber: 43
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1220,7 +1341,7 @@ function App() {
                                                                 children: "word"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 372,
+                                                                lineNumber: 432,
                                                                 columnNumber: 144
                                                             }, this),
                                                             " and ",
@@ -1228,7 +1349,7 @@ function App() {
                                                                 children: "meaning"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 372,
+                                                                lineNumber: 432,
                                                                 columnNumber: 166
                                                             }, this),
                                                             ". Add ",
@@ -1236,7 +1357,7 @@ function App() {
                                                                 children: "example"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 372,
+                                                                lineNumber: 432,
                                                                 columnNumber: 192
                                                             }, this),
                                                             " for sentence ordering. Verb practice needs all three fields: ",
@@ -1244,7 +1365,7 @@ function App() {
                                                                 children: "clozeSentence"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 372,
+                                                                lineNumber: 432,
                                                                 columnNumber: 274
                                                             }, this),
                                                             " containing ",
@@ -1252,7 +1373,7 @@ function App() {
                                                                 children: "___"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 372,
+                                                                lineNumber: 432,
                                                                 columnNumber: 312
                                                             }, this),
                                                             ", ",
@@ -1260,7 +1381,7 @@ function App() {
                                                                 children: "verbBase"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 372,
+                                                                lineNumber: 432,
                                                                 columnNumber: 330
                                                             }, this),
                                                             ", and explicit ",
@@ -1268,7 +1389,7 @@ function App() {
                                                                 children: "verbAnswer"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 372,
+                                                                lineNumber: 432,
                                                                 columnNumber: 366
                                                             }, this),
                                                             ". Optional ",
@@ -1276,7 +1397,7 @@ function App() {
                                                                 children: "hint"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 372,
+                                                                lineNumber: 432,
                                                                 columnNumber: 400
                                                             }, this),
                                                             " is shown as a clue. JSON accepts ",
@@ -1284,7 +1405,7 @@ function App() {
                                                                 children: "verbAnswer"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 372,
+                                                                lineNumber: 432,
                                                                 columnNumber: 451
                                                             }, this),
                                                             " as a string or array; CSV accepts multiple answers separated by ",
@@ -1292,14 +1413,14 @@ function App() {
                                                                 children: "|"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 372,
+                                                                lineNumber: 432,
                                                                 columnNumber: 539
                                                             }, this),
                                                             "."
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 372,
+                                                        lineNumber: 432,
                                                         columnNumber: 124
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1318,13 +1439,13 @@ function App() {
                                                                         }
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/App.tsx",
-                                                                        lineNumber: 372,
+                                                                        lineNumber: 432,
                                                                         columnNumber: 651
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 372,
+                                                                lineNumber: 432,
                                                                 columnNumber: 590
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1333,7 +1454,7 @@ function App() {
                                                                 children: "Download JSON example"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 372,
+                                                                lineNumber: 432,
                                                                 columnNumber: 827
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1342,13 +1463,13 @@ function App() {
                                                                 children: "Download CSV example"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 372,
+                                                                lineNumber: 432,
                                                                 columnNumber: 930
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 372,
+                                                        lineNumber: 432,
                                                         columnNumber: 558
                                                     }, this),
                                                     importMessage && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1357,7 +1478,7 @@ function App() {
                                                         children: importMessage
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 372,
+                                                        lineNumber: 432,
                                                         columnNumber: 1055
                                                     }, this),
                                                     importError && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("pre", {
@@ -1366,19 +1487,19 @@ function App() {
                                                         children: importError
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 372,
+                                                        lineNumber: 432,
                                                         columnNumber: 1135
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 372,
+                                                lineNumber: 432,
                                                 columnNumber: 92
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 372,
+                                        lineNumber: 432,
                                         columnNumber: 9
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1391,7 +1512,7 @@ function App() {
                                                         children: "Build your practice deck"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 373,
+                                                        lineNumber: 433,
                                                         columnNumber: 47
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1406,7 +1527,7 @@ function App() {
                                                                 children: "Choose manually"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 373,
+                                                                lineNumber: 433,
                                                                 columnNumber: 130
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1418,25 +1539,25 @@ function App() {
                                                                         children: "→"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/App.tsx",
-                                                                        lineNumber: 373,
+                                                                        lineNumber: 433,
                                                                         columnNumber: 418
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 373,
+                                                                lineNumber: 433,
                                                                 columnNumber: 327
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 373,
+                                                        lineNumber: 433,
                                                         columnNumber: 98
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 373,
+                                                lineNumber: 433,
                                                 columnNumber: 42
                                             }, this),
                                             selectionMessage && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1445,13 +1566,13 @@ function App() {
                                                 children: selectionMessage
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 373,
+                                                lineNumber: 433,
                                                 columnNumber: 474
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 373,
+                                        lineNumber: 433,
                                         columnNumber: 9
                                     }, this),
                                     !cards.length ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1462,27 +1583,27 @@ function App() {
                                                 children: "✳"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 374,
+                                                lineNumber: 434,
                                                 columnNumber: 49
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                                                 children: "Your first word is waiting"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 374,
+                                                lineNumber: 434,
                                                 columnNumber: 84
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                 children: "Add a word above to start a deck. Include an example sentence to unlock sentence-building practice."
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 374,
+                                                lineNumber: 434,
                                                 columnNumber: 119
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 374,
+                                        lineNumber: 434,
                                         columnNumber: 26
                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "word-list",
@@ -1503,7 +1624,7 @@ function App() {
                                                                 "aria-label": `Select ${card.word}`
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 375,
+                                                                lineNumber: 435,
                                                                 columnNumber: 42
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1511,13 +1632,13 @@ function App() {
                                                                 children: "✓"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 375,
+                                                                lineNumber: 435,
                                                                 columnNumber: 297
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 375,
+                                                        lineNumber: 435,
                                                         columnNumber: 11
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1527,7 +1648,7 @@ function App() {
                                                                 children: card.word
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 376,
+                                                                lineNumber: 436,
                                                                 columnNumber: 38
                                                             }, this),
                                                             card.pronunciation && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("small", {
@@ -1535,14 +1656,14 @@ function App() {
                                                                 children: card.pronunciation
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 376,
+                                                                lineNumber: 436,
                                                                 columnNumber: 81
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                                 children: card.meaning
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 376,
+                                                                lineNumber: 436,
                                                                 columnNumber: 143
                                                             }, this),
                                                             card.example && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("small", {
@@ -1553,13 +1674,13 @@ function App() {
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 376,
+                                                                lineNumber: 436,
                                                                 columnNumber: 181
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 376,
+                                                        lineNumber: 436,
                                                         columnNumber: 11
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1572,18 +1693,18 @@ function App() {
                                                         children: "×"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 377,
+                                                        lineNumber: 437,
                                                         columnNumber: 11
                                                     }, this)
                                                 ]
                                             }, card.id, true, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 374,
+                                                lineNumber: 434,
                                                 columnNumber: 289
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 374,
+                                        lineNumber: 434,
                                         columnNumber: 234
                                     }, this),
                                     pageCount > 1 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("nav", {
@@ -1598,7 +1719,7 @@ function App() {
                                                 children: "← Previous"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 378,
+                                                lineNumber: 438,
                                                 columnNumber: 114
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1611,7 +1732,7 @@ function App() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 378,
+                                                lineNumber: 438,
                                                 columnNumber: 271
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1622,13 +1743,13 @@ function App() {
                                                 children: "Next →"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 378,
+                                                lineNumber: 438,
                                                 columnNumber: 336
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 378,
+                                        lineNumber: 438,
                                         columnNumber: 46
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1641,7 +1762,7 @@ function App() {
                                                         children: "Ready when you are"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 379,
+                                                        lineNumber: 439,
                                                         columnNumber: 44
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
@@ -1653,20 +1774,20 @@ function App() {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 379,
+                                                        lineNumber: 439,
                                                         columnNumber: 89
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                         children: "Pick a practice style to begin."
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 379,
+                                                        lineNumber: 439,
                                                         columnNumber: 175
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 379,
+                                                lineNumber: 439,
                                                 columnNumber: 39
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1682,7 +1803,7 @@ function App() {
                                                                 children: "◉"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 379,
+                                                                lineNumber: 439,
                                                                 columnNumber: 351
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1691,33 +1812,33 @@ function App() {
                                                                         children: "Choose an answer"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/App.tsx",
-                                                                        lineNumber: 379,
+                                                                        lineNumber: 439,
                                                                         columnNumber: 395
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("small", {
                                                                         children: "Multiple choice"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/App.tsx",
-                                                                        lineNumber: 379,
+                                                                        lineNumber: 439,
                                                                         columnNumber: 418
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 379,
+                                                                lineNumber: 439,
                                                                 columnNumber: 389
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                 children: "→"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 379,
+                                                                lineNumber: 439,
                                                                 columnNumber: 455
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 379,
+                                                        lineNumber: 439,
                                                         columnNumber: 253
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1730,7 +1851,7 @@ function App() {
                                                                 children: "⌨"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 379,
+                                                                lineNumber: 439,
                                                                 columnNumber: 573
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1739,60 +1860,112 @@ function App() {
                                                                         children: "Write an answer"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/App.tsx",
-                                                                        lineNumber: 379,
+                                                                        lineNumber: 439,
                                                                         columnNumber: 617
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("small", {
                                                                         children: "Recall from memory"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/App.tsx",
-                                                                        lineNumber: 379,
+                                                                        lineNumber: 439,
                                                                         columnNumber: 639
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 379,
+                                                                lineNumber: 439,
                                                                 columnNumber: 611
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                 children: "→"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 379,
+                                                                lineNumber: 439,
                                                                 columnNumber: 679
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 379,
+                                                        lineNumber: 439,
                                                         columnNumber: 478
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 379,
+                                                lineNumber: 439,
                                                 columnNumber: 219
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 379,
+                                        lineNumber: 439,
                                         columnNumber: 9
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 364,
+                                lineNumber: 424,
                                 columnNumber: 7
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/App.tsx",
-                        lineNumber: 362,
+                        lineNumber: 422,
                         columnNumber: 27
                     }, this),
-                    mode !== 'idle' ? mode === 'sentences' ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
+                    isPracticePage && mode === 'idle' ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
+                        className: "exercise recovery",
+                        role: "status",
+                        "aria-labelledby": "practice-recovery-title",
+                        children: [
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                className: "eyebrow",
+                                children: "English practice"
+                            }, void 0, false, {
+                                fileName: "[project]/src/App.tsx",
+                                lineNumber: 443,
+                                columnNumber: 139
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
+                                id: "practice-recovery-title",
+                                children: "Resume your practice"
+                            }, void 0, false, {
+                                fileName: "[project]/src/App.tsx",
+                                lineNumber: 443,
+                                columnNumber: 182
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                children: practiceRecoveryMessage || 'Your practice session is ready.'
+                            }, void 0, false, {
+                                fileName: "[project]/src/App.tsx",
+                                lineNumber: 443,
+                                columnNumber: 240
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                className: "button dark",
+                                type: "button",
+                                onClick: backToEnglish,
+                                children: [
+                                    "Back to English practice ",
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        children: "→"
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/App.tsx",
+                                        lineNumber: 443,
+                                        columnNumber: 404
+                                    }, this)
+                                ]
+                            }, void 0, true, {
+                                fileName: "[project]/src/App.tsx",
+                                lineNumber: 443,
+                                columnNumber: 309
+                            }, this)
+                        ]
+                    }, void 0, true, {
+                        fileName: "[project]/src/App.tsx",
+                        lineNumber: 443,
+                        columnNumber: 44
+                    }, this) : isPracticePage && mode !== 'idle' ? mode === 'sentences' ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
                         className: "exercise",
                         "aria-live": "polite",
                         children: [
@@ -1802,8 +1975,8 @@ function App() {
                                 children: "← Back to English practice"
                             }, void 0, false, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 383,
-                                columnNumber: 98
+                                lineNumber: 443,
+                                columnNumber: 548
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 className: "eyebrow",
@@ -1815,8 +1988,8 @@ function App() {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 383,
-                                columnNumber: 187
+                                lineNumber: 443,
+                                columnNumber: 637
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                                 children: [
@@ -1825,42 +1998,49 @@ function App() {
                                         children: sentenceWord
                                     }, void 0, false, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 383,
-                                        columnNumber: 305
+                                        lineNumber: 443,
+                                        columnNumber: 755
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 383,
-                                columnNumber: 279
+                                lineNumber: 443,
+                                columnNumber: 729
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 className: "exercise-hint",
                                 children: "Tap each word in the right order. This sentence uses one of your selected vocabulary examples."
                             }, void 0, false, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 383,
-                                columnNumber: 333
+                                lineNumber: 443,
+                                columnNumber: 783
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "sentence-answer",
                                 children: sentenceAnswer.length ? sentenceAnswer.map((token, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                        children: token
-                                    }, `${token}-${i}`, false, {
+                                        type: "button",
+                                        onClick: removeSentenceToken.bind(null, i),
+                                        "aria-label": `Remove ${token} from your answer`,
+                                        "data-available-tokens": sentenceTokens.length,
+                                        children: [
+                                            token,
+                                            " ×"
+                                        ]
+                                    }, `${token}-${i}`, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 383,
-                                        columnNumber: 551
+                                        lineNumber: 443,
+                                        columnNumber: 1001
                                     }, this)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                     children: "Your sentence will appear here"
                                 }, void 0, false, {
                                     fileName: "[project]/src/App.tsx",
-                                    lineNumber: 383,
-                                    columnNumber: 601
+                                    lineNumber: 443,
+                                    columnNumber: 1205
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 383,
-                                columnNumber: 460
+                                lineNumber: 443,
+                                columnNumber: 910
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "token-tray",
@@ -1869,13 +2049,13 @@ function App() {
                                         children: token
                                     }, `${token}-${i}`, false, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 383,
-                                        columnNumber: 713
+                                        lineNumber: 443,
+                                        columnNumber: 1317
                                     }, this))
                             }, void 0, false, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 383,
-                                columnNumber: 651
+                                lineNumber: 443,
+                                columnNumber: 1255
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                 className: "button dark",
@@ -1888,14 +2068,14 @@ function App() {
                                             children: "→"
                                         }, void 0, false, {
                                             fileName: "[project]/src/App.tsx",
-                                            lineNumber: 383,
-                                            columnNumber: 1065
+                                            lineNumber: 443,
+                                            columnNumber: 1669
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/App.tsx",
-                                    lineNumber: 383,
-                                    columnNumber: 1049
+                                    lineNumber: 443,
+                                    columnNumber: 1653
                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
                                     children: [
                                         "Check sentence ",
@@ -1903,27 +2083,52 @@ function App() {
                                             children: "✓"
                                         }, void 0, false, {
                                             fileName: "[project]/src/App.tsx",
-                                            lineNumber: 383,
-                                            columnNumber: 1102
+                                            lineNumber: 443,
+                                            columnNumber: 1706
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/App.tsx",
-                                    lineNumber: 383,
-                                    columnNumber: 1085
+                                    lineNumber: 443,
+                                    columnNumber: 1689
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 383,
-                                columnNumber: 793
+                                lineNumber: 443,
+                                columnNumber: 1397
                             }, this),
-                            sentenceCheck !== null && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                className: sentenceCheck ? "result good" : "result bad",
-                                children: sentenceCheck ? "That sentence is in the right order." : "Not quite yet. Start over and try another order."
-                            }, void 0, false, {
+                            sentenceCheck !== null && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: `feedback-panel ${sentenceCheck ? 'correct' : 'incorrect'}`,
+                                role: "status",
+                                children: [
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
+                                        children: sentenceCheck ? 'Correct!' : 'Not quite.'
+                                    }, void 0, false, {
+                                        fileName: "[project]/src/App.tsx",
+                                        lineNumber: 443,
+                                        columnNumber: 1851
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                        children: [
+                                            "Correct sentence: ",
+                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("b", {
+                                                children: sentenceExpected
+                                            }, void 0, false, {
+                                                fileName: "[project]/src/App.tsx",
+                                                lineNumber: 443,
+                                                columnNumber: 1932
+                                            }, this)
+                                        ]
+                                    }, void 0, true, {
+                                        fileName: "[project]/src/App.tsx",
+                                        lineNumber: 443,
+                                        columnNumber: 1911
+                                    }, this)
+                                ]
+                            }, void 0, true, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 383,
-                                columnNumber: 1156
+                                lineNumber: 443,
+                                columnNumber: 1760
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                 className: "text-button",
@@ -1931,14 +2136,14 @@ function App() {
                                 children: "Start over"
                             }, void 0, false, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 383,
-                                columnNumber: 1330
+                                lineNumber: 443,
+                                columnNumber: 1968
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/App.tsx",
-                        lineNumber: 383,
-                        columnNumber: 49
+                        lineNumber: 443,
+                        columnNumber: 499
                     }, this) : mode === 'complete' ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
                         className: "exercise completion",
                         "aria-live": "polite",
@@ -1948,23 +2153,23 @@ function App() {
                                 children: "Session complete"
                             }, void 0, false, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 383,
-                                columnNumber: 1500
+                                lineNumber: 443,
+                                columnNumber: 2138
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                                 children: "Your practice flow is finished"
                             }, void 0, false, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 383,
-                                columnNumber: 1543
+                                lineNumber: 443,
+                                columnNumber: 2181
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 className: "flow-message",
                                 children: flowMessage
                             }, void 0, false, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 383,
-                                columnNumber: 1582
+                                lineNumber: 443,
+                                columnNumber: 2220
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 children: [
@@ -1973,8 +2178,8 @@ function App() {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 383,
-                                columnNumber: 1627
+                                lineNumber: 443,
+                                columnNumber: 2265
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                 className: "button dark",
@@ -1985,20 +2190,20 @@ function App() {
                                         children: "→"
                                     }, void 0, false, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 383,
-                                        columnNumber: 1738
+                                        lineNumber: 443,
+                                        columnNumber: 2376
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 383,
-                                columnNumber: 1657
+                                lineNumber: 443,
+                                columnNumber: 2295
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/App.tsx",
-                        lineNumber: 383,
-                        columnNumber: 1440
+                        lineNumber: 443,
+                        columnNumber: 2078
                     }, this) : mode === 'verb' ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
                         className: "exercise",
                         "aria-live": "polite",
@@ -2009,8 +2214,8 @@ function App() {
                                 children: "← Back to English practice"
                             }, void 0, false, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 383,
-                                columnNumber: 1841
+                                lineNumber: 443,
+                                columnNumber: 2479
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "quiz-head",
@@ -2022,29 +2227,29 @@ function App() {
                                                 children: "Verb forms · explicit answer key"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 1962
+                                                lineNumber: 443,
+                                                columnNumber: 2600
                                             }, this),
                                             flowMessage && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                 className: "flow-message",
                                                 children: flowMessage
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 2037
+                                                lineNumber: 443,
+                                                columnNumber: 2675
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                                                 children: "Complete the sentence"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 2083
+                                                lineNumber: 443,
+                                                columnNumber: 2721
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 383,
-                                        columnNumber: 1957
+                                        lineNumber: 443,
+                                        columnNumber: 2595
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         className: "counter",
@@ -2054,8 +2259,8 @@ function App() {
                                             verbCards.length,
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {}, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 2185
+                                                lineNumber: 443,
+                                                columnNumber: 2823
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("small", {
                                                 children: [
@@ -2064,20 +2269,20 @@ function App() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 2191
+                                                lineNumber: 443,
+                                                columnNumber: 2829
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 383,
-                                        columnNumber: 2119
+                                        lineNumber: 443,
+                                        columnNumber: 2757
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 383,
-                                columnNumber: 1930
+                                lineNumber: 443,
+                                columnNumber: 2568
                             }, this),
                             currentVerb ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
                                 children: [
@@ -2091,22 +2296,22 @@ function App() {
                                                         children: currentVerb.verbBase
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 383,
-                                                        columnNumber: 2301
+                                                        lineNumber: 443,
+                                                        columnNumber: 2939
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 2284
+                                                lineNumber: 443,
+                                                columnNumber: 2922
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                                                 className: "cloze-prompt",
                                                 children: currentVerb.clozeSentence
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 2337
+                                                lineNumber: 443,
+                                                columnNumber: 2975
                                             }, this),
                                             currentVerb.hint && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                 className: "verb-hint",
@@ -2116,14 +2321,14 @@ function App() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 2419
+                                                lineNumber: 443,
+                                                columnNumber: 3057
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 383,
-                                        columnNumber: 2251
+                                        lineNumber: 443,
+                                        columnNumber: 2889
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "type-answer",
@@ -2133,8 +2338,8 @@ function App() {
                                                 children: "Correct verb form"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 2512
+                                                lineNumber: 443,
+                                                columnNumber: 3150
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                 children: [
@@ -2149,8 +2354,8 @@ function App() {
                                                         placeholder: "Type the inflected form…"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 383,
-                                                        columnNumber: 2571
+                                                        lineNumber: 443,
+                                                        columnNumber: 3209
                                                     }, this),
                                                     feedback === null ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                         className: "button dark",
@@ -2162,14 +2367,14 @@ function App() {
                                                                 children: "→"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 383,
-                                                                columnNumber: 2932
+                                                                lineNumber: 443,
+                                                                columnNumber: 3570
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 383,
-                                                        columnNumber: 2848
+                                                        lineNumber: 443,
+                                                        columnNumber: 3486
                                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                         className: "button dark",
                                                         onClick: next,
@@ -2179,20 +2384,20 @@ function App() {
                                                                 children: "→"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 383,
-                                                                columnNumber: 3010
+                                                                lineNumber: 443,
+                                                                columnNumber: 3648
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 383,
-                                                        columnNumber: 2958
+                                                        lineNumber: 443,
+                                                        columnNumber: 3596
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 2566
+                                                lineNumber: 443,
+                                                columnNumber: 3204
                                             }, this),
                                             feedback !== null && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
                                                 children: [
@@ -2205,19 +2410,19 @@ function App() {
                                                                     children: currentVerb.verbAnswer?.join(' / ')
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/App.tsx",
-                                                                    lineNumber: 383,
-                                                                    columnNumber: 3177
+                                                                    lineNumber: 443,
+                                                                    columnNumber: 3815
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/App.tsx",
-                                                            lineNumber: 383,
-                                                            columnNumber: 3154
+                                                            lineNumber: 443,
+                                                            columnNumber: 3792
                                                         }, this)
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 383,
-                                                        columnNumber: 3064
+                                                        lineNumber: 443,
+                                                        columnNumber: 3702
                                                     }, this),
                                                     currentVerb.example && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                         className: "answer-example",
@@ -2226,34 +2431,34 @@ function App() {
                                                                 children: "Example:"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 383,
-                                                                columnNumber: 3283
+                                                                lineNumber: 443,
+                                                                columnNumber: 3921
                                                             }, this),
                                                             " ",
                                                             currentVerb.example
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 383,
-                                                        columnNumber: 3253
+                                                        lineNumber: 443,
+                                                        columnNumber: 3891
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 3062
+                                                lineNumber: 443,
+                                                columnNumber: 3700
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 383,
-                                        columnNumber: 2483
+                                        lineNumber: 443,
+                                        columnNumber: 3121
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 383,
-                                columnNumber: 2249
+                                lineNumber: 443,
+                                columnNumber: 2887
                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "done",
                                 children: [
@@ -2261,15 +2466,15 @@ function App() {
                                         children: "✦"
                                     }, void 0, false, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 383,
-                                        columnNumber: 3363
+                                        lineNumber: 443,
+                                        columnNumber: 4001
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                                         children: "Practice complete"
                                     }, void 0, false, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 383,
-                                        columnNumber: 3375
+                                        lineNumber: 443,
+                                        columnNumber: 4013
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                         children: [
@@ -2279,8 +2484,8 @@ function App() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 383,
-                                        columnNumber: 3401
+                                        lineNumber: 443,
+                                        columnNumber: 4039
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                         className: "button dark",
@@ -2291,26 +2496,26 @@ function App() {
                                                 children: "↻"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 3529
+                                                lineNumber: 443,
+                                                columnNumber: 4167
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 383,
-                                        columnNumber: 3449
+                                        lineNumber: 443,
+                                        columnNumber: 4087
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 383,
-                                columnNumber: 3341
+                                lineNumber: 443,
+                                columnNumber: 3979
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/App.tsx",
-                        lineNumber: 383,
-                        columnNumber: 1792
+                        lineNumber: 443,
+                        columnNumber: 2430
                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
                         className: "exercise",
                         "aria-live": "polite",
@@ -2321,8 +2526,8 @@ function App() {
                                 children: "← Back to English practice"
                             }, void 0, false, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 383,
-                                columnNumber: 3621
+                                lineNumber: 443,
+                                columnNumber: 4259
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "quiz-head",
@@ -2334,29 +2539,29 @@ function App() {
                                                 children: mode === 'choice' ? 'Quick check · choose' : 'Quick check · recall'
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 3742
+                                                lineNumber: 443,
+                                                columnNumber: 4380
                                             }, this),
                                             flowMessage && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                 className: "flow-message",
                                                 children: flowMessage
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 3854
+                                                lineNumber: 443,
+                                                columnNumber: 4492
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                                                 children: mode === 'choice' ? 'Choose the meaning' : 'Write the meaning'
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 3900
+                                                lineNumber: 443,
+                                                columnNumber: 4538
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 383,
-                                        columnNumber: 3737
+                                        lineNumber: 443,
+                                        columnNumber: 4375
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         className: "counter",
@@ -2366,8 +2571,8 @@ function App() {
                                             sessionCards.length,
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {}, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 4048
+                                                lineNumber: 443,
+                                                columnNumber: 4686
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("small", {
                                                 children: [
@@ -2376,20 +2581,20 @@ function App() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 4054
+                                                lineNumber: 443,
+                                                columnNumber: 4692
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 383,
-                                        columnNumber: 3979
+                                        lineNumber: 443,
+                                        columnNumber: 4617
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 383,
-                                columnNumber: 3710
+                                lineNumber: 443,
+                                columnNumber: 4348
                             }, this),
                             current ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
                                 children: [
@@ -2400,29 +2605,29 @@ function App() {
                                                 children: "What does this word mean?"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 4139
+                                                lineNumber: 443,
+                                                columnNumber: 4777
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                                                 children: current.word
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 4177
+                                                lineNumber: 443,
+                                                columnNumber: 4815
                                             }, this),
                                             current.pronunciation && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                 className: "pronunciation",
                                                 children: current.pronunciation
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 4226
+                                                lineNumber: 443,
+                                                columnNumber: 4864
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 383,
-                                        columnNumber: 4110
+                                        lineNumber: 443,
+                                        columnNumber: 4748
                                     }, this),
                                     mode === 'choice' ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
                                         children: [
@@ -2437,26 +2642,26 @@ function App() {
                                                                 children: card.meaning
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 383,
-                                                                columnNumber: 4714
+                                                                lineNumber: 443,
+                                                                columnNumber: 5352
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("b", {
                                                                 children: feedback !== null && card.id === current.id ? '✓' : '↗'
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 383,
-                                                                columnNumber: 4741
+                                                                lineNumber: 443,
+                                                                columnNumber: 5379
                                                             }, this)
                                                         ]
                                                     }, card.id, true, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 383,
-                                                        columnNumber: 4464
+                                                        lineNumber: 443,
+                                                        columnNumber: 5102
                                                     }, this))
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 4312
+                                                lineNumber: 443,
+                                                columnNumber: 4950
                                             }, this),
                                             feedback !== null && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                 className: feedback ? 'feedback-panel correct' : 'feedback-panel incorrect',
@@ -2466,8 +2671,8 @@ function App() {
                                                         children: feedback ? 'Correct!' : 'Not quite.'
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 383,
-                                                        columnNumber: 4940
+                                                        lineNumber: 443,
+                                                        columnNumber: 5578
                                                     }, this),
                                                     !feedback && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                         children: [
@@ -2476,8 +2681,8 @@ function App() {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 383,
-                                                        columnNumber: 5009
+                                                        lineNumber: 443,
+                                                        columnNumber: 5647
                                                     }, this),
                                                     current.example && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                         children: [
@@ -2485,28 +2690,28 @@ function App() {
                                                                 children: "Example:"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 383,
-                                                                columnNumber: 5075
+                                                                lineNumber: 443,
+                                                                columnNumber: 5713
                                                             }, this),
                                                             " ",
                                                             current.example
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 383,
-                                                        columnNumber: 5072
+                                                        lineNumber: 443,
+                                                        columnNumber: 5710
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 4844
+                                                lineNumber: 443,
+                                                columnNumber: 5482
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 383,
-                                        columnNumber: 4310
+                                        lineNumber: 443,
+                                        columnNumber: 4948
                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "type-answer",
                                         children: [
@@ -2515,8 +2720,8 @@ function App() {
                                                 children: "Your answer"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 5155
+                                                lineNumber: 443,
+                                                columnNumber: 5793
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                 children: [
@@ -2531,8 +2736,8 @@ function App() {
                                                         placeholder: "Type the meaning…"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 383,
-                                                        columnNumber: 5211
+                                                        lineNumber: 443,
+                                                        columnNumber: 5849
                                                     }, this),
                                                     feedback === null ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                         className: "button dark",
@@ -2544,14 +2749,14 @@ function App() {
                                                                 children: "→"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 383,
-                                                                columnNumber: 5552
+                                                                lineNumber: 443,
+                                                                columnNumber: 6190
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 383,
-                                                        columnNumber: 5464
+                                                        lineNumber: 443,
+                                                        columnNumber: 6102
                                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                         className: "button dark",
                                                         onClick: next,
@@ -2562,20 +2767,20 @@ function App() {
                                                                 children: "→"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 383,
-                                                                columnNumber: 5691
+                                                                lineNumber: 443,
+                                                                columnNumber: 6329
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 383,
-                                                        columnNumber: 5578
+                                                        lineNumber: 443,
+                                                        columnNumber: 6216
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 5206
+                                                lineNumber: 443,
+                                                columnNumber: 5844
                                             }, this),
                                             feedback !== null && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
                                                 children: [
@@ -2584,8 +2789,8 @@ function App() {
                                                         children: feedback ? 'Correct — nice recall.' : `Not quite. Expected meaning: ${current.meaning}`
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 383,
-                                                        columnNumber: 5745
+                                                        lineNumber: 443,
+                                                        columnNumber: 6383
                                                     }, this),
                                                     current.example && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                         className: "answer-example",
@@ -2594,28 +2799,28 @@ function App() {
                                                                 children: "Example:"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/App.tsx",
-                                                                lineNumber: 383,
-                                                                columnNumber: 5943
+                                                                lineNumber: 443,
+                                                                columnNumber: 6581
                                                             }, this),
                                                             " ",
                                                             current.example
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 383,
-                                                        columnNumber: 5913
+                                                        lineNumber: 443,
+                                                        columnNumber: 6551
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 5743
+                                                lineNumber: 443,
+                                                columnNumber: 6381
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 383,
-                                        columnNumber: 5126
+                                        lineNumber: 443,
+                                        columnNumber: 5764
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         className: "quiz-footer",
@@ -2624,8 +2829,8 @@ function App() {
                                                 children: feedback === null ? 'Take your time — you’ve got this.' : 'Answer checked'
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 6021
+                                                lineNumber: 443,
+                                                columnNumber: 6659
                                             }, this),
                                             mode === 'choice' && feedback !== null && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                 className: "button dark",
@@ -2637,26 +2842,26 @@ function App() {
                                                         children: "→"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/App.tsx",
-                                                        lineNumber: 383,
-                                                        columnNumber: 6283
+                                                        lineNumber: 443,
+                                                        columnNumber: 6921
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 6153
+                                                lineNumber: 443,
+                                                columnNumber: 6791
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 383,
-                                        columnNumber: 5992
+                                        lineNumber: 443,
+                                        columnNumber: 6630
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 383,
-                                columnNumber: 4108
+                                lineNumber: 443,
+                                columnNumber: 4746
                             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: "done",
                                 children: [
@@ -2664,15 +2869,15 @@ function App() {
                                         children: "✦"
                                     }, void 0, false, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 383,
-                                        columnNumber: 6341
+                                        lineNumber: 443,
+                                        columnNumber: 6979
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                                         children: "Practice complete"
                                     }, void 0, false, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 383,
-                                        columnNumber: 6353
+                                        lineNumber: 443,
+                                        columnNumber: 6991
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                         children: [
@@ -2682,8 +2887,8 @@ function App() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 383,
-                                        columnNumber: 6379
+                                        lineNumber: 443,
+                                        columnNumber: 7017
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                         className: "button dark",
@@ -2694,31 +2899,31 @@ function App() {
                                                 children: "↻"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/App.tsx",
-                                                lineNumber: 383,
-                                                columnNumber: 6535
+                                                lineNumber: 443,
+                                                columnNumber: 7173
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/App.tsx",
-                                        lineNumber: 383,
-                                        columnNumber: 6430
+                                        lineNumber: 443,
+                                        columnNumber: 7068
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/App.tsx",
-                                lineNumber: 383,
-                                columnNumber: 6319
+                                lineNumber: 443,
+                                columnNumber: 6957
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/App.tsx",
-                        lineNumber: 383,
-                        columnNumber: 3572
+                        lineNumber: 443,
+                        columnNumber: 4210
                     }, this) : null
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/App.tsx",
-                lineNumber: 352,
+                lineNumber: 412,
                 columnNumber: 5
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("footer", {
@@ -2727,30 +2932,30 @@ function App() {
                         children: "wordcraft"
                     }, void 0, false, {
                         fileName: "[project]/src/App.tsx",
-                        lineNumber: 385,
+                        lineNumber: 445,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                         children: "Small steps add up to fluency."
                     }, void 0, false, {
                         fileName: "[project]/src/App.tsx",
-                        lineNumber: 385,
+                        lineNumber: 445,
                         columnNumber: 35
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/App.tsx",
-                lineNumber: 385,
+                lineNumber: 445,
                 columnNumber: 5
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/App.tsx",
-        lineNumber: 350,
+        lineNumber: 410,
         columnNumber: 10
     }, this);
 }
-_s(App, "0M2NOl1Cw+wr+RzWQ2426vskMTM=", false, function() {
+_s(App, "p00C4MvYRjkRm2Q9+Q+6YLHc1q0=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["usePathname"],
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
