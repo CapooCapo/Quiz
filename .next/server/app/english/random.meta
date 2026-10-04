@@ -1,0 +1,39 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/english/layout,_N_T_/english/random/layout,_N_T_/english/random/page,_N_T_/english/random"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/english/random/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 96,
+        "slots": {
+          "children": {
+            "hints": 96,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/890fd0de9e0cf12afe44c18a76adb7f387b272a8d13fd986f312246dbd8f0440/$/english/random",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/english/random/page"
+    },
+    "isFallback": false
+  }
+}
