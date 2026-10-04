@@ -173,6 +173,11 @@ export default function App() {
   const [newMeaning, setNewMeaning] = useState('')
   const [newPronunciation, setNewPronunciation] = useState('')
   const [newExample, setNewExample] = useState('')
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editWord, setEditWord] = useState('')
+  const [editMeaning, setEditMeaning] = useState('')
+  const [editPronunciation, setEditPronunciation] = useState('')
+  const [editExample, setEditExample] = useState('')
   const [sentenceTokens, setSentenceTokens] = useState<string[]>([])
   const [sentenceAnswer, setSentenceAnswer] = useState<string[]>([])
   const [sentenceWord, setSentenceWord] = useState('')
@@ -277,6 +282,26 @@ export default function App() {
     setCards((items) => [card, ...items]); setSelected((items) => [...items, card.id])
     setLibraryPage(1)
     setNewWord(''); setNewMeaning(''); setNewExample(''); setNewPronunciation('')
+  }
+  const startEditing = (card: WordCard) => {
+    setEditingId(card.id)
+    setEditWord(card.word)
+    setEditMeaning(card.meaning)
+    setEditPronunciation(card.pronunciation ?? '')
+    setEditExample(card.example)
+  }
+  const cancelEditing = () => setEditingId(null)
+  const saveEdit = (event: FormEvent, id: string) => {
+    event.preventDefault()
+    if (!editWord.trim() || !editMeaning.trim()) return
+    setCards((items) => items.map((item) => item.id !== id ? item : {
+      ...item,
+      word: editWord.trim(),
+      meaning: editMeaning.trim(),
+      example: editExample.trim(),
+      pronunciation: editPronunciation.trim() || undefined,
+    }))
+    setEditingId(null)
   }
   const handleImport = async (file?: File) => {
     if (!file) return
@@ -433,8 +458,14 @@ export default function App() {
         <div className="selection-tools"><div><p className="eyebrow">Build your practice deck</p><div className="selection-tabs"><button className={selectionMode === 'manual' ? 'selected' : ''} onClick={() => { setSelectionMode('manual'); setSelectionMessage('Choose words from the library below.') }}>Choose manually</button><button className="random-link" onClick={() => router.push('/english/random')}>Pick Random <span>→</span></button></div></div>{selectionMessage && <p className="selection-message" role="status">{selectionMessage}</p>}</div>
         {!cards.length ? <div className="empty"><div className="empty-mark">✳</div><h3>Your first word is waiting</h3><p>Add a word above to start a deck. Include an example sentence to unlock sentence-building practice.</p></div> : <div className="word-list">{visibleCards.map((card) => <article className={`word-row ${selected.includes(card.id) ? 'is-selected' : ''}`} key={card.id}>
           <label className="select-word"><input type="checkbox" checked={selected.includes(card.id)} disabled={selectionMode === "random"} onChange={(e) => setSelected((items) => e.target.checked ? [...items, card.id] : items.filter((id) => id !== card.id))} aria-label={`Select ${card.word}`} /><span className="checkmark">✓</span></label>
-          <div className="word-main"><h3>{card.word}</h3>{card.pronunciation && <small className="pronunciation">{card.pronunciation}</small>}<p>{card.meaning}</p>{card.example && <small>“{card.example}”</small>}</div>
-          <button className="remove" onClick={() => { setCards((items) => items.filter((item) => item.id !== card.id)); setSelected((items) => items.filter((id) => id !== card.id)) }} aria-label={`Remove ${card.word}`}>×</button>
+          {editingId === card.id ? <form className="word-edit-form" onSubmit={(event) => saveEdit(event, card.id)} aria-label={`Edit ${card.word}`}>
+            <label>Word<input autoFocus value={editWord} onChange={(event) => setEditWord(event.target.value)} required /></label>
+            <label>Meaning<input value={editMeaning} onChange={(event) => setEditMeaning(event.target.value)} required /></label>
+            <label>Pronunciation <small>IPA, optional</small><input value={editPronunciation} onChange={(event) => setEditPronunciation(event.target.value)} /></label>
+            <label className="edit-example">Example sentence<input value={editExample} onChange={(event) => setEditExample(event.target.value)} /></label>
+            <div className="word-edit-actions"><button className="button dark" type="submit" disabled={!editWord.trim() || !editMeaning.trim()}>Save changes</button><button className="button outline" type="button" onClick={cancelEditing}>Cancel</button></div>
+          </form> : <div className="word-main"><h3>{card.word}</h3>{card.pronunciation && <small className="pronunciation">{card.pronunciation}</small>}<p>{card.meaning}</p>{card.example && <small>“{card.example}”</small>}</div>}
+          {editingId !== card.id && <div className="word-actions"><button className="edit-word" type="button" onClick={() => startEditing(card)} disabled={editingId !== null} aria-label={`Edit ${card.word}`}>Edit</button><button className="remove" type="button" onClick={() => { setCards((items) => items.filter((item) => item.id !== card.id)); setSelected((items) => items.filter((id) => id !== card.id)) }} aria-label={`Remove ${card.word}`}>×</button></div>}
         </article>)}</div>}{pageCount > 1 && <nav className="library-pagination" aria-label="Word library pages"><button className="button outline" onClick={() => setLibraryPage(visiblePage - 1)} disabled={visiblePage <= 1} aria-label="Previous page">← Previous</button><span aria-live="polite">Page {visiblePage} of {pageCount}</span><button className="button outline" onClick={() => setLibraryPage(visiblePage + 1)} disabled={visiblePage >= pageCount} aria-label="Next page">Next →</button></nav>}
         <div className="practice-bar"><div><p className="eyebrow">Ready when you are</p><strong>{selected.length} {selected.length === 1 ? 'word' : 'words'} selected</strong><p>Pick a practice style to begin.</p></div><div className="practice-actions"><button className="button outline" disabled={selected.length < 2} onClick={() => begin('choice')}><span className="action-icon">◉</span><span><b>Choose an answer</b><small>Multiple choice</small></span><span>→</span></button><button className="button outline" disabled={!selected.length} onClick={() => begin('typing')}><span className="action-icon">⌨</span><span><b>Write an answer</b><small>Recall from memory</small></span><span>→</span></button></div></div>
       </section>

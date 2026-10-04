@@ -1382,4 +1382,110 @@ footer span:first-child {
   color: var(--muted);
 }
 
+.word-row {
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+}
+
+.word-actions {
+  align-items: center;
+  gap: 9px;
+  display: flex;
+}
+
+.edit-word {
+  border: 1px solid var(--line);
+  color: var(--green);
+  background: none;
+  border-radius: 6px;
+  padding: 6px 9px;
+  font-size: .7rem;
+  font-weight: 700;
+}
+
+.edit-word:hover {
+  background: var(--mint);
+}
+
+.word-edit-form {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  min-width: 0;
+  display: grid;
+}
+
+.word-edit-form label {
+  color: #49584d;
+  gap: 5px;
+  font-size: .7rem;
+  font-weight: 700;
+  display: grid;
+}
+
+.word-edit-form label small {
+  color: var(--muted);
+  font-size: .6rem;
+  font-weight: 400;
+}
+
+.word-edit-form input {
+  width: 100%;
+  min-width: 0;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid #e3e8df;
+  border-radius: 7px;
+  padding: 9px 10px;
+  font-size: .78rem;
+}
+
+.word-edit-actions {
+  grid-column: 1 / -1;
+  justify-content: flex-end;
+  gap: 8px;
+  display: flex;
+}
+
+.word-edit-actions .button {
+  padding: 8px 11px;
+  font-size: .7rem;
+}
+
+:root[data-theme="dark"] .word-edit-form label {
+  color: var(--ink);
+}
+
+:root[data-theme="dark"] .word-edit-form input {
+  color: var(--ink);
+  background: #171717;
+  border-color: #383838;
+}
+
+:root[data-theme="dark"] .edit-word {
+  color: #b5dfbf;
+  border-color: #383838;
+}
+
+:root[data-theme="dark"] .edit-word:hover {
+  background: #193123;
+}
+
+@media (max-width: 560px) {
+  .word-edit-form {
+    grid-template-columns: 1fr;
+  }
+
+  .word-row {
+    gap: 9px;
+    padding: 12px 3px;
+  }
+
+  .word-actions {
+    gap: 5px;
+  }
+
+  .edit-word {
+    padding: 6px 7px;
+  }
+}
+
 /*# sourceMappingURL=app_globals_0yg4wg8.css.map*/

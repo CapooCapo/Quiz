@@ -37,3 +37,18 @@
 :root[data-theme="dark"] .add-form label,:root[data-theme="dark"] .type-answer label{color:var(--ink)}
 :root[data-theme="dark"] .word-main p,:root[data-theme="dark"] .section-title>p,:root[data-theme="dark"] .word-main small:not(.pronunciation),:root[data-theme="dark"] .add-form small{color:var(--muted)}
 :root[data-theme="dark"] .language-card p:not(.eyebrow),:root[data-theme="dark"] .exercise-hint,:root[data-theme="dark"] .import-content>p{color:var(--muted)}
+.word-row{grid-template-columns:28px minmax(0,1fr) auto}
+.word-actions{display:flex;align-items:center;gap:9px}
+.edit-word{border:1px solid var(--line);border-radius:6px;background:transparent;color:var(--green);padding:6px 9px;font-size:.7rem;font-weight:700}
+.edit-word:hover{background:var(--mint)}
+.word-edit-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;min-width:0}
+.word-edit-form label{display:grid;gap:5px;color:#49584d;font-size:.7rem;font-weight:700}
+.word-edit-form label small{font-size:.6rem;color:var(--muted);font-weight:400}
+.word-edit-form input{width:100%;min-width:0;border:1px solid #e3e8df;background:#fff;border-radius:7px;padding:9px 10px;font-size:.78rem;color:var(--ink)}
+.word-edit-actions{grid-column:1/-1;display:flex;justify-content:flex-end;gap:8px}
+.word-edit-actions .button{padding:8px 11px;font-size:.7rem}
+:root[data-theme="dark"] .word-edit-form label{color:var(--ink)}
+:root[data-theme="dark"] .word-edit-form input{background:#171717;color:var(--ink);border-color:#383838}
+:root[data-theme="dark"] .edit-word{border-color:#383838;color:#b5dfbf}
+:root[data-theme="dark"] .edit-word:hover{background:#193123}
+@media(max-width:560px){.word-edit-form{grid-template-columns:1fr}.word-row{gap:9px;padding:12px 3px}.word-actions{gap:5px}.edit-word{padding:6px 7px}}
