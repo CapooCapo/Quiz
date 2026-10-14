@@ -5,7 +5,7 @@
       "routeType": "page",
       "response": "complete",
       "compute": "static",
-      "htmlSize": 8978,
+      "htmlSize": 9194,
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -86,11 +86,39 @@
         "x-next-revalidate-tag-token"
       ]
     },
+    "/english/practice": {
+      "routeType": "page",
+      "response": "complete",
+      "compute": "static",
+      "htmlSize": 7629,
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/english/practice",
+      "dataRoute": "/english/practice.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
     "/english/random": {
       "routeType": "page",
       "response": "complete",
       "compute": "static",
-      "htmlSize": 8096,
+      "htmlSize": 8312,
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -105,6 +133,34 @@
       "initialRevalidateSeconds": false,
       "srcRoute": "/english/random",
       "dataRoute": "/english/random.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/ielts-writing": {
+      "routeType": "page",
+      "response": "complete",
+      "compute": "static",
+      "htmlSize": 20429,
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/ielts-writing",
+      "dataRoute": "/ielts-writing.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",

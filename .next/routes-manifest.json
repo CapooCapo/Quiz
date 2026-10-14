@@ -42,10 +42,28 @@
       "namedRegex": "^/_not\\-found(?:/)?$"
     },
     {
+      "page": "/api/ielts-writing/evaluate",
+      "regex": "^/api/ielts\\-writing/evaluate(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/ielts\\-writing/evaluate(?:/)?$"
+    },
+    {
+      "page": "/english/practice",
+      "regex": "^/english/practice(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/english/practice(?:/)?$"
+    },
+    {
       "page": "/english/random",
       "regex": "^/english/random(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/english/random(?:/)?$"
+    },
+    {
+      "page": "/ielts-writing",
+      "regex": "^/ielts\\-writing(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/ielts\\-writing(?:/)?$"
     }
   ],
   "dataRoutes": [],

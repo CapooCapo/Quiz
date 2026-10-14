@@ -52,3 +52,5 @@
 :root[data-theme="dark"] .edit-word{border-color:#383838;color:#b5dfbf}
 :root[data-theme="dark"] .edit-word:hover{background:#193123}
 @media(max-width:560px){.word-edit-form{grid-template-columns:1fr}.word-row{gap:9px;padding:12px 3px}.word-actions{gap:5px}.edit-word{padding:6px 7px}}
+.academy-nav-link{display:inline-flex;align-items:center;gap:7px;padding:8px 10px;border:1px solid #dcebdd;border-radius:7px;background:#f0f6ef;color:#286b50;text-decoration:none;font-size:.73rem;font-weight:700;white-space:nowrap}.academy-nav-link:hover{background:#e5f0e4}.academy-nav-link span{font-size:.9rem}
+@media(max-width:700px){.academy-nav-link{order:4;padding:7px 9px;font-size:.68rem}}

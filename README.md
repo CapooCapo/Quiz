@@ -2,6 +2,12 @@
 
 A local-first vocabulary quiz built with Next.js App Router. The default page opens English practice; a visible Japanese entry remains disabled while that space is temporarily unavailable.
 
+## IELTS Writing Academy
+
+The `/ielts-writing` route provides seven sprint-delivered learning areas: sourced interactive charts, introduction/overview lessons, trend vocabulary, body-paragraph practice, mixed quizzes/progress, and a full Task 1 editor. Academy drafts/progress are stored in the current browser only; there is no account sync.
+
+AI writing evaluation is optional and **off by default**. To enable it on a trusted server, configure `IELTS_AI_EVALUATION_ENABLED=true`, `OPENAI_API_KEY`, and `IELTS_AI_MODEL` as server-only environment variables. Never use a `NEXT_PUBLIC_` key. The server limits each paragraph to 2,500 characters, allows at most five requests per IP per rolling hour per process, and caps each provider response at 1,200 output tokens. Evaluation is sent only after the student presses the optional AI button; requests use the OpenAI Responses API with `store:false`. Usage may incur provider charges. The in-memory rate limit is per process and is not a substitute for a shared limiter on multi-instance hosting. AI feedback is educational, not an official IELTS score.
+
 ## Run locally
 
 Prerequisite: Node.js 20.9+ and npm.
@@ -26,6 +32,7 @@ Open the local URL printed by Next.js. Production uses `npm run build` and `npm 
 - English vocabulary is stored separately in browser `localStorage` under `kotoba-en-cards-v1`.
 - On first load, a versioned one-time migration adds a 10-word English starter pack (Vietnamese meanings and examples) only when a case/whitespace-normalized word is missing. Existing entries are kept as-is, and the migration marker prevents deleted pack words from reappearing after later reloads.
 - Separate one-time, additive migrations add the 12 career vocabulary items and 18 general vocabulary items with Vietnamese meanings, pronunciation, and example sentences. They use independent version markers and alias-aware normalized deduplication, preserving existing cards and edits without re-adding deleted entries on later loads.
+- A separate one-time, additive migration adds 17 location and shopping vocabulary cards with Vietnamese meanings and example sentences. Common input typos are retained as deduplication aliases, while the quiz displays the corrected forms.
 - After a meaning or verb-form answer is checked, feedback shows whether it was correct, the expected answer when needed, and the word's English example sentence.
 - The library displays 10 words per page with accessible previous/next controls. Manual selections persist across pages, while random picks and quiz sessions use the full library. Adding or importing words returns the view to page 1; removing words safely clamps the view if the last page becomes shorter or disappears.
 
@@ -33,4 +40,4 @@ The Japanese space is a non-interactive “temporarily unavailable” card. Exis
 
 ## Deployment
 
-Deploy as a Next.js application (for example, use Vercel's Next.js preset). This app has no backend or required environment variables. Vocabulary remains in the current browser and does not synchronize across devices.
+Deploy as a Next.js application (for example, use Vercel's Next.js preset). AI feedback remains unavailable until the server-only settings above are configured. Vocabulary, Academy progress, drafts, and saved submissions remain in the current browser and do not synchronize across devices.

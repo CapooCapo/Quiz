@@ -10,6 +10,8 @@ const STORAGE_KEY = 'kotoba-en-cards-v1'
 const WORD_PACK_MARKER_KEY = 'kotoba-en-wildlife-pack-v1-installed'
 const CAREER_PACK_MARKER_KEY = 'kotoba-en-career-pack-v1-installed'
 const GENERAL_PACK_MARKER_KEY = 'kotoba-en-general-pack-v1-installed'
+const LOCATION_SHOPPING_PACK_MARKER_KEY = 'kotoba-en-location-shopping-pack-v1-installed'
+const ECOLOGY_PACK_MARKER_KEY = 'kotoba-en-ecology-pack-v1-installed'
 const PRACTICE_SESSION_KEY = 'kotoba-en-practice-session-v1'
 const THEME_KEY = 'kotoba-en-theme-v1'
 const WORDS_PER_PAGE = 10
@@ -58,6 +60,34 @@ const generalWords: Omit<WordCard, 'id'>[] = [
   { word: 'enthusiast', meaning: 'người say mê; người đam mê', pronunciation: 'UK /ɪnˈθjuː.zi.æst/ · US /ɪnˈθuː.zi.æst/', example: 'A photography enthusiast, she spends weekends capturing wildlife.' },
   { word: 'to get lean', meaning: 'trở nên săn chắc, giảm mỡ', pronunciation: '/ɡet liːn/', example: 'He follows a balanced diet and strength program to get lean.' },
   { word: 'to get rid of negative energies', meaning: 'loại bỏ những năng lượng tiêu cực', pronunciation: '/ɡet ˈrɪd əv ˈneɡ.ə.tɪv ˈen.ə.dʒiz/', example: 'She goes for a quiet walk to get rid of negative energies after a stressful day.' },
+]
+const locationShoppingWords: Omit<WordCard, 'id'>[] = [
+  { word: 'pass', meaning: 'đi qua; vượt qua', example: 'Pass the fountain, and the theatre will be on your left.' },
+  { word: 'situate', meaning: 'đặt; tọa lạc ở', example: 'The university is situated near the city centre.' },
+  { word: 'on the other side of + something', meaning: 'ở phía bên kia của thứ gì', example: 'The law faculty is on the other side of the river.' },
+  { word: 'beyond', meaning: 'ở phía bên kia; vượt quá', example: 'The accommodation is beyond the main entrance.' },
+  { word: 'ahead of something', aliases: ['a head of something'], meaning: 'ở phía trước thứ gì', example: 'The fountain is just ahead of the theatre.' },
+  { word: 'accommodation', meaning: 'chỗ ở; nơi lưu trú', example: 'The university provides accommodation for first-year students.' },
+  { word: 'law faculty', meaning: 'khoa luật', example: 'She studies at the law faculty.' },
+  { word: 'fountain', aliases: ['foutain'], meaning: 'đài phun nước', example: 'We arranged to meet beside the fountain.' },
+  { word: 'opposite', meaning: 'đối diện; ở phía đối diện', example: 'The theatre is opposite the shopping centre.' },
+  { word: 'theatre', meaning: 'nhà hát; rạp hát', example: 'The new theatre is opposite the law faculty.' },
+  { word: 'faculty of medicine', aliases: ['ifaculty of medicine'], meaning: 'khoa y', example: 'He hopes to study at the faculty of medicine.' },
+  { word: 'window shopping', meaning: 'ngắm hàng hóa mà không mua', example: 'We went window shopping along the high street.' },
+  { word: 'after-sales service', aliases: ['after-sale-service'], meaning: 'dịch vụ hậu mãi', example: 'The shop is known for its reliable after-sales service.' },
+  { word: 'e-commerce', meaning: 'thương mại điện tử', example: 'E-commerce allows customers to shop online.' },
+  { word: 'to buy something at a bargain price', aliases: ['to buy something at bargain price'], meaning: 'mua được thứ gì với giá hời', example: 'She bought the coat at a bargain price during the sale.' },
+  { word: 'to bargain', meaning: 'mặc cả; thương lượng giá', example: 'You can bargain with the seller at the street market.' },
+  { word: 'to shop for something', meaning: 'đi mua/tìm mua thứ gì', example: 'They went to the mall to shop for new shoes.' },
+]
+const ecologyWords: Omit<WordCard, 'id'>[] = [
+  { word: 'para-ecologist', meaning: 'người hỗ trợ nhà sinh thái học, thường được đào tạo để thu thập dữ liệu thực địa', example: 'The para-ecologist recorded bird and insect sightings across the reserve.' },
+  { word: 'taxonomy', meaning: 'ngành phân loại sinh vật; hệ thống phân loại', example: 'Taxonomy helps scientists classify organisms into related groups.' },
+  { word: 'caterpillar', meaning: 'sâu bướm; ấu trùng của bướm hoặc ngài', example: 'The caterpillar feeds on leaves before it becomes a butterfly.' },
+  { word: 'extrapolate', meaning: 'ngoại suy; ước tính xu hướng ngoài phạm vi dữ liệu hiện có', example: 'Researchers extrapolated the population trend from the first three years of data.' },
+  { word: 'underestimate', meaning: 'đánh giá thấp; ước tính thấp hơn thực tế', example: 'A short survey may underestimate the number of insects in the forest.' },
+  { word: 'slash-and-burn', meaning: 'phát quang bằng cách chặt và đốt thảm thực vật; đốt nương làm rẫy', example: 'Slash-and-burn farming can destroy habitats and release carbon.' },
+  { word: 'specimen', meaning: 'mẫu vật dùng để nghiên cứu hoặc kiểm tra', example: 'Each specimen was labelled before it was sent to the laboratory.' },
 ]
 const normalizeWord = (word: string) => word.toLocaleLowerCase().trim().replace(/\s+/g, ' ')
 const clean = (text: string) => text.toLocaleLowerCase().replace(/[.,!?;:]/g, '').replace(/\s+/g, ' ').trim()
@@ -204,25 +234,30 @@ export default function App() {
     } catch { canPersist = false }
     let mergedCards = existingCards
     const installPack = (markerKey: string, words: Omit<WordCard, 'id'>[]) => {
-      if (localStorage.getItem(markerKey) === 'v1') return
+      if (localStorage.getItem(markerKey) === 'v1') return [] as WordCard[]
       const existingWords = new Set(mergedCards.flatMap((card) => [
         ...(typeof card.word === 'string' ? [normalizeWord(card.word)] : []),
         ...(Array.isArray(card.aliases) ? card.aliases.filter((alias): alias is string => typeof alias === 'string').map(normalizeWord) : []),
       ]))
-      const missingWords = words.filter((card) => ![card.word, ...(card.aliases ?? [])].some((word) => existingWords.has(normalizeWord(word))))
+      const missingWords: WordCard[] = words.filter((card) => ![card.word, ...(card.aliases ?? [])].some((word) => existingWords.has(normalizeWord(word))))
         .map((card) => ({ ...card, id: makeId() }))
       mergedCards = [...mergedCards, ...missingWords]
       localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedCards))
       localStorage.setItem(markerKey, 'v1')
+      return missingWords
     }
+    let newEcologyCards: WordCard[] = []
     try {
       if (canPersist) {
         installPack(WORD_PACK_MARKER_KEY, starterWords)
         installPack(CAREER_PACK_MARKER_KEY, careerWords)
         installPack(GENERAL_PACK_MARKER_KEY, generalWords)
+        installPack(LOCATION_SHOPPING_PACK_MARKER_KEY, locationShoppingWords)
+        newEcologyCards = installPack(ECOLOGY_PACK_MARKER_KEY, ecologyWords)
       }
     } catch { /* Keep current cards available; a failed migration is safe to retry. */ }
     setCards(mergedCards)
+    if (newEcologyCards.length) setSelected(newEcologyCards.map((card) => card.id))
     setStorageReady(canPersist)
     setLoaded(true)
   }, [])
@@ -433,7 +468,7 @@ export default function App() {
   }
 
   return <div className="shell">
-    <header className="topbar"><a className="logo" href="/" onClick={(event) => { event.preventDefault(); backToEnglish() }}>word<span>craft</span></a><nav className="language-switch" aria-label="Learning language"><span className="language-active">English</span><button type="button" disabled aria-disabled="true">Japanese · Temporarily unavailable</button></nav><button className="theme-toggle" type="button" onClick={toggleTheme} aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`} aria-pressed={theme === 'dark'}>{theme === 'light' ? '☾ Dark' : '☀ Light'}</button><span className="local-note">Your vocabulary stays on this device</span></header>
+    <header className="topbar"><a className="logo" href="/" onClick={(event) => { event.preventDefault(); backToEnglish() }}>word<span>craft</span></a><nav className="language-switch" aria-label="Learning language"><span className="language-active">English</span><button type="button" disabled aria-disabled="true">Japanese · Temporarily unavailable</button></nav><a className="academy-nav-link" href="/ielts-writing">Writing Academy <span aria-hidden="true">↗</span></a><a className="academy-nav-link" href="/ielts-writing#quiz">IELTS Quiz <span aria-hidden="true">↗</span></a><button className="theme-toggle" type="button" onClick={toggleTheme} aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`} aria-pressed={theme === 'dark'}>{theme === 'light' ? '☾ Dark' : '☀ Light'}</button><span className="local-note">Your vocabulary stays on this device</span></header>
     <main id="home">
       {isPracticePage ? null : isRandomPicker ? mode === 'idle' ? <section className="exercise random-picker" aria-labelledby="random-title">
         <button className="back-link" onClick={backToEnglish}>← Back to English practice</button>

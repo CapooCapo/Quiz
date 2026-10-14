@@ -1,6 +1,9 @@
 {
   "/_global-error/page": "app/_global-error/page.js",
   "/_not-found/page": "app/_not-found/page.js",
+  "/api/ielts-writing/evaluate/route": "app/api/ielts-writing/evaluate/route.js",
+  "/english/practice/page": "app/english/practice/page.js",
   "/english/random/page": "app/english/random/page.js",
+  "/ielts-writing/page": "app/ielts-writing/page.js",
   "/page": "app/page.js"
 }
