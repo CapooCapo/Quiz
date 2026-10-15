@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { startTransition, useEffect, useState } from 'react'
 import type { AcademyQuestion } from '../types'
 import { assessmentQuestions } from '../data/assessment'
 import { evaluateAnswer } from '../evaluateAnswer'
@@ -9,7 +9,7 @@ import styles from '../academy.module.css'
 const storageKey='wordcraft-ielts-quiz-v1'
 export function QuizWorkspace({onComplete}:{onComplete:(id:string)=>void}) {
  const [index,setIndex]=useState(0); const [answer,setAnswer]=useState<string[]>([]); const [result,setResult]=useState<boolean|null>(null); const [mistakes,setMistakes]=useState<string[]>([]); const [done,setDone]=useState<string[]>([])
- useEffect(()=>{try{const saved=JSON.parse(localStorage.getItem(storageKey)||'{}');setIndex(Math.min(saved.index||0,assessmentQuestions.length-1));setMistakes(saved.mistakes||[]);setDone(saved.done||[])}catch{/* begin a fresh quiz */}},[])
+ useEffect(()=>{try{const saved=JSON.parse(localStorage.getItem(storageKey)||'{}');startTransition(()=>{setIndex(Math.min(saved.index||0,assessmentQuestions.length-1));setMistakes(saved.mistakes||[]);setDone(saved.done||[])})}catch{/* begin a fresh quiz */}},[])
  const question=assessmentQuestions[index]
  const persist=(next:{index?:number;mistakes?:string[];done?:string[]})=>{try{localStorage.setItem(storageKey,JSON.stringify({index,mistakes,done,...next}))}catch{/* progress remains usable for this session */}}
  const setSingle=(value:string)=>{setAnswer([value]);setResult(null)}

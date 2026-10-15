@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { startTransition, useEffect, useState } from 'react'
 import { writingCategories } from './data/categories'
 import { chartDatasets } from './data/charts'
 import { CategoryCard } from './components/CategoryCard'
@@ -17,8 +17,8 @@ export default function IELTSWritingAcademy() {
   const [tab, setTab] = useState<AcademyTab>('Explore')
   const [selectedLesson, setSelectedLesson] = useState<string | null>(null)
   const [completed, setCompleted] = useState<string[]>([])
-  useEffect(() => { try { const saved=localStorage.getItem('wordcraft-ielts-progress-v1'); if(saved) setCompleted(JSON.parse(saved)) } catch { /* Ignore malformed local progress and keep the page usable. */ } }, [])
-  useEffect(() => { if (window.location.hash === '#quiz') setTab('Quiz & progress') }, [])
+  useEffect(() => { try { const saved=localStorage.getItem('wordcraft-ielts-progress-v1'); if(saved) startTransition(() => setCompleted(JSON.parse(saved))) } catch { /* Ignore malformed local progress and keep the page usable. */ } }, [])
+  useEffect(() => { if (window.location.hash === '#quiz') startTransition(() => setTab('Quiz & progress')) }, [])
   const markCompleted = (id:string) => setCompleted((current)=>{ const next=current.includes(id)?current:[...current,id]; try{localStorage.setItem('wordcraft-ielts-progress-v1',JSON.stringify(next))}catch{/* storage may be unavailable */} return next })
   return <div className={styles.page}>
     <header className={styles.header}>
@@ -48,9 +48,6 @@ export default function IELTSWritingAcademy() {
 }
 
 function LearningWorkspace({tab,onComplete}:{tab:Exclude<AcademyTab,'Explore'>;onComplete:(id:string)=>void}) {
-  const [index,setIndex]=useState(0)
-  const [answer,setAnswer]=useState('')
-  const [checked,setChecked]=useState(false)
   if(tab==='Introduction & overview') return <TeachingWorkspace onComplete={onComplete}/>
   if(tab==='Vocabulary & grammar') return <VocabularyWorkspace onComplete={onComplete}/>
   if(tab==='Body paragraphs') return <BodyWorkspace onComplete={onComplete}/>

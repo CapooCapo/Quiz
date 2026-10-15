@@ -1,0 +1,76 @@
+
+name: CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cd-vercel-main
+  cancel-in-progress: false
+
+jobs:
+  staging:
+    name: Deploy Staging
+
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+
+    runs-on: ubuntu-latest
+
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+    steps:
+      - name: Checkout exact commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Verify current main
+        env:
+          EXPECTED_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          CURRENT_SHA="$(git ls-remote origin refs/heads/main | cut -f1)"
+          test "$CURRENT_SHA" = "$EXPECTED_SHA"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Staging Environment
+        run: |
+          vercel pull --yes \
+            --environment=preview \
+            --token "$VERCEL_TOKEN"
+
+      - name: Deploy Staging
+        id: deploy
+        run: |
+          URL="$(vercel deploy --yes --token "$VERCEL_TOKEN")"
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "Staging URL: $URL"
+
+      - name: Smoke Test Staging
+        env:
+          PREVIEW_URL: ${{ steps.deploy.outputs.url }}
+        run: |
+          vercel curl / \
+            --deployment "$PREVIEW_URL" \
+            --token "$VERCEL_TOKEN" \
+            -fsSL -o /dev/null
+
