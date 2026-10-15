@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useMemo, useState, type FormEvent } from 'react'
+import { startTransition, useEffect, useMemo, useState, type FormEvent } from 'react'
+import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 
 type WordCard = { id: string; word: string; meaning: string; example: string; pronunciation?: string; aliases?: string[]; clozeSentence?: string; verbBase?: string; verbAnswer?: string[]; hint?: string }
@@ -256,28 +257,32 @@ export default function App() {
         newEcologyCards = installPack(ECOLOGY_PACK_MARKER_KEY, ecologyWords)
       }
     } catch { /* Keep current cards available; a failed migration is safe to retry. */ }
-    setCards(mergedCards)
-    if (newEcologyCards.length) setSelected(newEcologyCards.map((card) => card.id))
-    setStorageReady(canPersist)
-    setLoaded(true)
+    startTransition(() => {
+      setCards(mergedCards)
+      if (newEcologyCards.length) setSelected(newEcologyCards.map((card) => card.id))
+      setStorageReady(canPersist)
+      setLoaded(true)
+    })
   }, [])
   useEffect(() => { if (loaded && storageReady) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cards)) } catch { /* Session-only fallback. */ } } }, [cards, loaded, storageReady])
   useEffect(() => {
     let saved: string | null = null
     try { saved = localStorage.getItem(THEME_KEY) } catch { /* Use system preference. */ }
     const preference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-    setTheme(saved === 'dark' || saved === 'light' ? saved : preference)
+    startTransition(() => setTheme(saved === 'dark' || saved === 'light' ? saved : preference))
   }, [])
   useEffect(() => { document.documentElement.dataset.theme = theme }, [theme])
   useEffect(() => {
     if (!isPracticePage) return
     if (!loaded) {
-      setPracticeRecoveryMessage('Loading your English practice…')
+      startTransition(() => setPracticeRecoveryMessage('Loading your English practice…'))
       return
     }
     if (!storageReady) {
-      setMode('idle')
-      setPracticeRecoveryMessage('Your vocabulary could not be loaded, so this practice session cannot be restored.')
+      startTransition(() => {
+        setMode('idle')
+        setPracticeRecoveryMessage('Your vocabulary could not be loaded, so this practice session cannot be restored.')
+      })
       return
     }
     try {
@@ -287,17 +292,24 @@ export default function App() {
       const ids = Array.isArray(savedIds) ? savedIds.filter((id): id is string => typeof id === 'string') : []
       const deck = ids.map((id) => cards.find((card) => card.id === id)).filter((card): card is WordCard => !!card)
       if (!Array.isArray(savedIds) || ids.length !== savedIds.length || !deck.length || deck.length !== ids.length || (saved?.mode !== 'choice' && saved?.mode !== 'typing')) {
-        setMode('idle')
-        setPracticeRecoveryMessage('This practice session is missing or out of date. Return to English practice and choose a deck again.')
+        startTransition(() => {
+          setMode('idle')
+          setPracticeRecoveryMessage('This practice session is missing or out of date. Return to English practice and choose a deck again.')
+        })
         return
       }
-      setSelected(deck.map((card) => card.id)); setSessionCards(deck); setSentenceCards(deck.filter((card) => card.example.trim()))
-      setMode(saved.mode); setQuestionIndex(0); setScore(0); setAnswer(''); setFeedback(null); setSentenceAnswer([]); setSentenceCheck(null)
-      if (saved.mode === 'choice') prepareChoices(0, deck)
-      setPracticeRecoveryMessage('')
+      const restoredMode = saved.mode
+      startTransition(() => {
+        setSelected(deck.map((card) => card.id)); setSessionCards(deck); setSentenceCards(deck.filter((card) => card.example.trim()))
+        setMode(restoredMode); setQuestionIndex(0); setScore(0); setAnswer(''); setFeedback(null); setSentenceAnswer([]); setSentenceCheck(null)
+        if (restoredMode === 'choice') prepareChoices(0, deck)
+        setPracticeRecoveryMessage('')
+      })
     } catch {
-      setMode('idle')
-      setPracticeRecoveryMessage('This practice session could not be restored. Return to English practice and choose a deck again.')
+      startTransition(() => {
+        setMode('idle')
+        setPracticeRecoveryMessage('This practice session could not be restored. Return to English practice and choose a deck again.')
+      })
     }
   // Restore saved deck after client-side navigation or refresh.
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -354,7 +366,7 @@ export default function App() {
       setImportError(error instanceof Error ? error.message : 'The file could not be read. Check its format and try again.')
     }
   }
-  const prepareChoices = (index: number, deck: WordCard[]) => {
+  function prepareChoices(index: number, deck: WordCard[]) {
     const target = deck[index]
     if (!target) { setChoiceOrder([]); return }
     const choices = [target, ...deck.filter((card) => card.id !== target.id).sort(() => Math.random() - 0.5).slice(0, 3)]
@@ -468,7 +480,7 @@ export default function App() {
   }
 
   return <div className="shell">
-    <header className="topbar"><a className="logo" href="/" onClick={(event) => { event.preventDefault(); backToEnglish() }}>word<span>craft</span></a><nav className="language-switch" aria-label="Learning language"><span className="language-active">English</span><button type="button" disabled aria-disabled="true">Japanese · Temporarily unavailable</button></nav><a className="academy-nav-link" href="/ielts-writing">Writing Academy <span aria-hidden="true">↗</span></a><a className="academy-nav-link" href="/ielts-writing#quiz">IELTS Quiz <span aria-hidden="true">↗</span></a><button className="theme-toggle" type="button" onClick={toggleTheme} aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`} aria-pressed={theme === 'dark'}>{theme === 'light' ? '☾ Dark' : '☀ Light'}</button><span className="local-note">Your vocabulary stays on this device</span></header>
+    <header className="topbar"><Link className="logo" href="/" onClick={(event) => { event.preventDefault(); backToEnglish() }}>word<span>craft</span></Link><nav className="language-switch" aria-label="Learning language"><span className="language-active">English</span><button type="button" disabled aria-disabled="true">Japanese · Temporarily unavailable</button></nav><Link className="academy-nav-link" href="/ielts-writing">Writing Academy <span aria-hidden="true">↗</span></Link><Link className="academy-nav-link" href="/ielts-writing#quiz">IELTS Quiz <span aria-hidden="true">↗</span></Link><button className="theme-toggle" type="button" onClick={toggleTheme} aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`} aria-pressed={theme === 'dark'}>{theme === 'light' ? '☾ Dark' : '☀ Light'}</button><span className="local-note">Your vocabulary stays on this device</span></header>
     <main id="home">
       {isPracticePage ? null : isRandomPicker ? mode === 'idle' ? <section className="exercise random-picker" aria-labelledby="random-title">
         <button className="back-link" onClick={backToEnglish}>← Back to English practice</button>
@@ -506,7 +518,7 @@ export default function App() {
       </section>
       </>}
 
-      {isPracticePage && mode === 'idle' ? <section className="exercise recovery" role="status" aria-labelledby="practice-recovery-title"><p className="eyebrow">English practice</p><h1 id="practice-recovery-title">Resume your practice</h1><p>{practiceRecoveryMessage || 'Your practice session is ready.'}</p><button className="button dark" type="button" onClick={backToEnglish}>Back to English practice <span>→</span></button></section> : isPracticePage && mode !== 'idle' ? mode === 'sentences' ? <section className="exercise" aria-live="polite"><button className="back-link" onClick={backToEnglish}>← Back to English practice</button><p className="eyebrow">Sentence matching · {questionIndex + 1} of {sentenceCards.length}</p><h2>Build a sentence with <em>{sentenceWord}</em></h2><p className="exercise-hint">Tap each word in the right order. This sentence uses one of your selected vocabulary examples.</p><div className="sentence-answer">{sentenceAnswer.length ? sentenceAnswer.map((token, i) => <button type="button" key={`${token}-${i}`} onClick={removeSentenceToken.bind(null, i)} aria-label={`Remove ${token} from your answer`} data-available-tokens={sentenceTokens.length}>{token} ×</button>) : <span>Your sentence will appear here</span>}</div><div className="token-tray">{sentenceTokens.map((token, i) => <button key={`${token}-${i}`} onClick={() => choose(i)}>{token}</button>)}</div><button className="button dark" disabled={sentenceTokens.length > 0 || !sentenceAnswer.length} onClick={() => sentenceCheck ? next() : setSentenceCheck(cleanSentence(sentenceAnswer.join(" ")) === cleanSentence(sentenceExpected))}>{sentenceCheck === true ? <>Next sentence <span>→</span></> : <>Check sentence <span>✓</span></>}</button>{sentenceCheck !== null && <div className={`feedback-panel ${sentenceCheck ? 'correct' : 'incorrect'}`} role="status"><strong>{sentenceCheck ? 'Correct!' : 'Not quite.'}</strong><p>Correct sentence: <b>{sentenceExpected}</b></p></div>}<button className="text-button" onClick={resetSentence}>Start over</button></section> : mode === 'complete' ? <section className="exercise completion" aria-live="polite"><p className="eyebrow">Session complete</p><h2>Your practice flow is finished</h2><p className="flow-message">{flowMessage}</p><p>{score} correct answers</p><button className="button dark" onClick={backToEnglish}>Back to English practice <span>→</span></button></section> : mode === 'verb' ? <section className="exercise" aria-live="polite"><button className="back-link" onClick={backToEnglish}>← Back to English practice</button><div className="quiz-head"><div><p className="eyebrow">Verb forms · explicit answer key</p>{flowMessage && <p className="flow-message">{flowMessage}</p>}<h2>Complete the sentence</h2></div><span className="counter">{questionIndex + 1} / {verbCards.length}<br /><small>{score} correct</small></span></div>{currentVerb ? <><article className="prompt-card"><span>Base verb: <b>{currentVerb.verbBase}</b></span><h3 className="cloze-prompt">{currentVerb.clozeSentence}</h3>{currentVerb.hint && <p className="verb-hint">Clue: {currentVerb.hint}</p>}</article><div className="type-answer"><label htmlFor="verb-answer">Correct verb form</label><div><input id="verb-answer" value={answer} disabled={feedback !== null} onChange={(event) => setAnswer(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') feedback === null ? checkVerb() : next() }} placeholder="Type the inflected form…" />{feedback === null ? <button className="button dark" disabled={!answer.trim()} onClick={checkVerb}>Check <span>→</span></button> : <button className="button dark" onClick={next}>Next <span>→</span></button>}</div>{feedback !== null && <><p className={feedback ? 'result good' : 'result bad'}>{feedback ? 'Correct verb form.' : <>Not quite. Expected: <b>{currentVerb.verbAnswer?.join(' / ')}</b></>}</p>{currentVerb.example && <p className="answer-example"><b>Example:</b> {currentVerb.example}</p>}</>}</div></> : <div className="done"><div>✦</div><h2>Practice complete</h2><p>{score} correct out of {verbCards.length}</p><button className="button dark" onClick={() => backToEnglish()}>Back to English <span>↻</span></button></div>}</section> : <section className="exercise" aria-live="polite"><button className="back-link" onClick={backToEnglish}>← Back to English practice</button><div className="quiz-head"><div><p className="eyebrow">{mode === 'choice' ? 'Quick check · choose' : 'Quick check · recall'}</p>{flowMessage && <p className="flow-message">{flowMessage}</p>}<h2>{mode === 'choice' ? 'Choose the meaning' : 'Write the meaning'}</h2></div><span className="counter">{questionIndex + 1} / {sessionCards.length}<br /><small>{score} correct</small></span></div>{current ? <><div className="prompt-card"><span>What does this word mean?</span><h3>{current.word}</h3>{current.pronunciation && <p className="pronunciation">{current.pronunciation}</p>}</div>{mode === 'choice' ? <><div className="answer-options">{choiceOrder.map((id) => cards.find((card) => card.id === id)).filter((card): card is WordCard => !!card).map((card) => <button className={`option ${feedback !== null && card.id === current.id ? 'correct' : ''} ${feedback === false && clean(answer) === clean(card.meaning) ? 'wrong' : ''}`} key={card.id} disabled={feedback !== null} onClick={() => check(card.meaning)}><span>{card.meaning}</span><b>{feedback !== null && card.id === current.id ? '✓' : '↗'}</b></button>)}</div>{feedback !== null && <div className={feedback ? 'feedback-panel correct' : 'feedback-panel incorrect'} role="status"><strong>{feedback ? 'Correct!' : 'Not quite.'}</strong>{!feedback && <p>Expected meaning: {current.meaning}</p>}{current.example && <p><b>Example:</b> {current.example}</p>}</div>}</> : <div className="type-answer"><label htmlFor="meaning-answer">Your answer</label><div><input id="meaning-answer" value={answer} disabled={feedback !== null} onChange={(e) => setAnswer(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') feedback === null ? check() : next() }} placeholder="Type the meaning…" />{feedback === null ? <button className="button dark" disabled={!answer.trim()} onClick={() => check()}>Check <span>→</span></button> : <button className="button dark" onClick={next}>{questionIndex + 1 === sessionCards.length ? 'Continue' : 'Next'} <span>→</span></button>}</div>{feedback !== null && <><p className={feedback ? 'result good' : 'result bad'}>{feedback ? 'Correct — nice recall.' : `Not quite. Expected meaning: ${current.meaning}`}</p>{current.example && <p className="answer-example"><b>Example:</b> {current.example}</p>}</>}</div>}<div className="quiz-footer"><span>{feedback === null ? 'Take your time — you’ve got this.' : 'Answer checked'}</span>{mode === 'choice' && feedback !== null && <button className="button dark" onClick={next}>{questionIndex + 1 === sessionCards.length ? 'Continue to matching' : 'Next word'} <span>→</span></button>}</div></> : <div className="done"><div>✦</div><h2>Practice complete</h2><p>{score} correct out of {sessionCards.length}</p><button className="button dark" onClick={() => begin(mode === 'choice' ? 'choice' : 'typing')}>Try again <span>↻</span></button></div>}</section> : null}
+      {isPracticePage && mode === 'idle' ? <section className="exercise recovery" role="status" aria-labelledby="practice-recovery-title"><p className="eyebrow">English practice</p><h1 id="practice-recovery-title">Resume your practice</h1><p>{practiceRecoveryMessage || 'Your practice session is ready.'}</p><button className="button dark" type="button" onClick={backToEnglish}>Back to English practice <span>→</span></button></section> : isPracticePage && mode !== 'idle' ? mode === 'sentences' ? <section className="exercise" aria-live="polite"><button className="back-link" onClick={backToEnglish}>← Back to English practice</button><p className="eyebrow">Sentence matching · {questionIndex + 1} of {sentenceCards.length}</p><h2>Build a sentence with <em>{sentenceWord}</em></h2><p className="exercise-hint">Tap each word in the right order. This sentence uses one of your selected vocabulary examples.</p><div className="sentence-answer">{sentenceAnswer.length ? sentenceAnswer.map((token, i) => <button type="button" key={`${token}-${i}`} onClick={removeSentenceToken.bind(null, i)} aria-label={`Remove ${token} from your answer`} data-available-tokens={sentenceTokens.length}>{token} ×</button>) : <span>Your sentence will appear here</span>}</div><div className="token-tray">{sentenceTokens.map((token, i) => <button key={`${token}-${i}`} onClick={() => choose(i)}>{token}</button>)}</div><button className="button dark" disabled={sentenceTokens.length > 0 || !sentenceAnswer.length} onClick={() => sentenceCheck ? next() : setSentenceCheck(cleanSentence(sentenceAnswer.join(" ")) === cleanSentence(sentenceExpected))}>{sentenceCheck === true ? <>Next sentence <span>→</span></> : <>Check sentence <span>✓</span></>}</button>{sentenceCheck !== null && <div className={`feedback-panel ${sentenceCheck ? 'correct' : 'incorrect'}`} role="status"><strong>{sentenceCheck ? 'Correct!' : 'Not quite.'}</strong><p>Correct sentence: <b>{sentenceExpected}</b></p></div>}<button className="text-button" onClick={resetSentence}>Start over</button></section> : mode === 'complete' ? <section className="exercise completion" aria-live="polite"><p className="eyebrow">Session complete</p><h2>Your practice flow is finished</h2><p className="flow-message">{flowMessage}</p><p>{score} correct answers</p><button className="button dark" onClick={backToEnglish}>Back to English practice <span>→</span></button></section> : mode === 'verb' ? <section className="exercise" aria-live="polite"><button className="back-link" onClick={backToEnglish}>← Back to English practice</button><div className="quiz-head"><div><p className="eyebrow">Verb forms · explicit answer key</p>{flowMessage && <p className="flow-message">{flowMessage}</p>}<h2>Complete the sentence</h2></div><span className="counter">{questionIndex + 1} / {verbCards.length}<br /><small>{score} correct</small></span></div>{currentVerb ? <><article className="prompt-card"><span>Base verb: <b>{currentVerb.verbBase}</b></span><h3 className="cloze-prompt">{currentVerb.clozeSentence}</h3>{currentVerb.hint && <p className="verb-hint">Clue: {currentVerb.hint}</p>}</article><div className="type-answer"><label htmlFor="verb-answer">Correct verb form</label><div><input id="verb-answer" value={answer} disabled={feedback !== null} onChange={(event) => setAnswer(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter') { if (feedback === null) checkVerb(); else next() } }} placeholder="Type the inflected form…" />{feedback === null ? <button className="button dark" disabled={!answer.trim()} onClick={checkVerb}>Check <span>→</span></button> : <button className="button dark" onClick={next}>Next <span>→</span></button>}</div>{feedback !== null && <><p className={feedback ? 'result good' : 'result bad'}>{feedback ? 'Correct verb form.' : <>Not quite. Expected: <b>{currentVerb.verbAnswer?.join(' / ')}</b></>}</p>{currentVerb.example && <p className="answer-example"><b>Example:</b> {currentVerb.example}</p>}</>}</div></> : <div className="done"><div>✦</div><h2>Practice complete</h2><p>{score} correct out of {verbCards.length}</p><button className="button dark" onClick={() => backToEnglish()}>Back to English <span>↻</span></button></div>}</section> : <section className="exercise" aria-live="polite"><button className="back-link" onClick={backToEnglish}>← Back to English practice</button><div className="quiz-head"><div><p className="eyebrow">{mode === 'choice' ? 'Quick check · choose' : 'Quick check · recall'}</p>{flowMessage && <p className="flow-message">{flowMessage}</p>}<h2>{mode === 'choice' ? 'Choose the meaning' : 'Write the meaning'}</h2></div><span className="counter">{questionIndex + 1} / {sessionCards.length}<br /><small>{score} correct</small></span></div>{current ? <><div className="prompt-card"><span>What does this word mean?</span><h3>{current.word}</h3>{current.pronunciation && <p className="pronunciation">{current.pronunciation}</p>}</div>{mode === 'choice' ? <><div className="answer-options">{choiceOrder.map((id) => cards.find((card) => card.id === id)).filter((card): card is WordCard => !!card).map((card) => <button className={`option ${feedback !== null && card.id === current.id ? 'correct' : ''} ${feedback === false && clean(answer) === clean(card.meaning) ? 'wrong' : ''}`} key={card.id} disabled={feedback !== null} onClick={() => check(card.meaning)}><span>{card.meaning}</span><b>{feedback !== null && card.id === current.id ? '✓' : '↗'}</b></button>)}</div>{feedback !== null && <div className={feedback ? 'feedback-panel correct' : 'feedback-panel incorrect'} role="status"><strong>{feedback ? 'Correct!' : 'Not quite.'}</strong>{!feedback && <p>Expected meaning: {current.meaning}</p>}{current.example && <p><b>Example:</b> {current.example}</p>}</div>}</> : <div className="type-answer"><label htmlFor="meaning-answer">Your answer</label><div><input id="meaning-answer" value={answer} disabled={feedback !== null} onChange={(e) => setAnswer(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') { if (feedback === null) check(); else next() } }} placeholder="Type the meaning…" />{feedback === null ? <button className="button dark" disabled={!answer.trim()} onClick={() => check()}>Check <span>→</span></button> : <button className="button dark" onClick={next}>{questionIndex + 1 === sessionCards.length ? 'Continue' : 'Next'} <span>→</span></button>}</div>{feedback !== null && <><p className={feedback ? 'result good' : 'result bad'}>{feedback ? 'Correct — nice recall.' : `Not quite. Expected meaning: ${current.meaning}`}</p>{current.example && <p className="answer-example"><b>Example:</b> {current.example}</p>}</>}</div>}<div className="quiz-footer"><span>{feedback === null ? 'Take your time — you’ve got this.' : 'Answer checked'}</span>{mode === 'choice' && feedback !== null && <button className="button dark" onClick={next}>{questionIndex + 1 === sessionCards.length ? 'Continue to matching' : 'Next word'} <span>→</span></button>}</div></> : <div className="done"><div>✦</div><h2>Practice complete</h2><p>{score} correct out of {sessionCards.length}</p><button className="button dark" onClick={() => begin(mode === 'choice' ? 'choice' : 'typing')}>Try again <span>↻</span></button></div>}</section> : null}
     </main>
     <footer><span>wordcraft</span><span>Small steps add up to fluency.</span></footer>
   </div>

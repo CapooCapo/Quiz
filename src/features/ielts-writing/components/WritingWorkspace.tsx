@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { startTransition, useEffect, useMemo, useState } from 'react'
 import { chartDatasets } from '../data/charts'
 import { ChartViewer } from './ChartViewer'
 import { evaluateWriting, type WritingDraft } from '../evaluateWriting'
@@ -13,7 +13,7 @@ type AiFeedback={overallBand:number;criteria:{name:string;band:number;feedback:s
 const fields:[keyof WritingDraft,string,string][]=[['introduction','Introduction','Paraphrase the chart topic and time period.'],['overview','Overview','Summarise the most important overall features.'],['body1','Body 1','Group and describe a first set of key data.'],['body2','Body 2','Describe remaining key features and comparisons.']]
 export function WritingWorkspace({onComplete}:{onComplete:(id:string)=>void}) {
  const [draft,setDraft]=useState(blank); const [submissions,setSubmissions]=useState<Submission[]>([]); const [feedbackOpen,setFeedbackOpen]=useState(false); const [selected,setSelected]=useState<Submission|null>(null); const [aiFeedback,setAiFeedback]=useState<AiFeedback|null>(null); const [aiError,setAiError]=useState(''); const [aiLoading,setAiLoading]=useState(false)
- useEffect(()=>{try{const saved=JSON.parse(localStorage.getItem(key)||'{}');setDraft({...blank,...saved.draft});setSubmissions(saved.submissions||[])}catch{/* start with a blank writing session */}},[])
+ useEffect(()=>{try{const saved=JSON.parse(localStorage.getItem(key)||'{}');startTransition(()=>{setDraft({...blank,...saved.draft});setSubmissions(saved.submissions||[])})}catch{/* start with a blank writing session */}},[])
  const feedback=useMemo(()=>evaluateWriting(selected?.draft??draft),[selected,draft])
  const persist=(nextDraft:WritingDraft,nextSubmissions=submissions)=>{try{localStorage.setItem(key,JSON.stringify({draft:nextDraft,submissions:nextSubmissions}))}catch{/* drafts remain available until this page closes */}}
  const update=(field:keyof WritingDraft,value:string)=>{const next={...draft,[field]:value};setDraft(next);setSelected(null);persist(next)}
