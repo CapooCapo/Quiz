@@ -69,8 +69,10 @@ jobs:
         env:
           PREVIEW_URL: ${{ steps.deploy.outputs.url }}
         run: |
-          vercel curl / \
-            --deployment "$PREVIEW_URL" \
-            --token "$VERCEL_TOKEN" \
-            -- -f -s -S -L -o /dev/null
+          set -euo pipefail
+
+          echo "Testing Staging: $PREVIEW_URL"
+
+          vercel curl "$PREVIEW_URL" -- -f -s -S -L -o /dev/null
+
           echo "Staging smoke test PASSED"
