@@ -72,5 +72,5 @@ jobs:
           vercel curl / \
             --deployment "$PREVIEW_URL" \
             --token "$VERCEL_TOKEN" \
-            -fsSL -o /dev/null
-
+            -- -f -s -S -L -o /dev/null
+          echo "Staging smoke test PASSED"
