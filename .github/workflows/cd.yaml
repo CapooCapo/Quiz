@@ -1,4 +1,3 @@
-
 name: CD Pipeline
 
 on:
@@ -17,6 +16,7 @@ concurrency:
 jobs:
   staging:
     name: Deploy Staging
+    environment: staging
 
     if: >-
       github.event.workflow_run.conclusion == 'success' &&
@@ -25,11 +25,13 @@ jobs:
       github.event.workflow_run.head_repository.full_name == github.repository
 
     runs-on: ubuntu-latest
+    outputs:
+      url: ${{steps.deploy.outputs.url}}
 
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
 
     steps:
       - name: Checkout exact commit
@@ -76,3 +78,75 @@ jobs:
           vercel curl "$PREVIEW_URL" -- -f -s -S -L -o /dev/null
 
           echo "Staging smoke test PASSED"
+
+  production:
+    name: Deploy Production
+    needs: staging
+    runs-on: ubuntu-latest
+    environment: production
+
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+      PRODUCTION_URL: ${{ vars.PRODUCTION_URL }}
+      STAGING_URL: ${{ needs.staging.outputs.url }}
+      EXPECTED_SHA: ${{ github.event.workflow_run.head_sha }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Verify Production Inputs
+        run: |
+          set -euo pipefail
+
+          test -n "$VERCEL_TOKEN"
+          test -n "$VERCEL_ORG_ID"
+          test -n "$VERCEL_PROJECT_ID"
+          test -n "$STAGING_URL"
+          test -n "$PRODUCTION_URL"
+
+          CURRENT_SHA="$(git ls-remote origin refs/heads/main | cut -f1)"
+
+          if [ "$CURRENT_SHA" != "$EXPECTED_SHA" ]; then
+            echo "Main has changed. Deployment stopped."
+            exit 1
+          fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 24
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Promote to Production
+        run: |
+          set -euo pipefail
+
+          vercel promote "$STAGING_URL" \
+            --yes \
+            --timeout=10m \
+            --token "$VERCEL_TOKEN"
+
+      - name: Smoke Test Production
+        run: |
+          set -euo pipefail
+
+          PRODUCTION_URL="${PRODUCTION_URL%/}"
+
+          echo "Checking Production homepage..."
+          curl -fsSL --retry 3 \
+            --retry-delay 2 \
+            "$PRODUCTION_URL/" -o /dev/null
+
+          echo "Checking IELTS Writing..."
+          curl -fsSL --retry 3 \
+            --retry-delay 2 \
+            "$PRODUCTION_URL/ielts-writing" -o /dev/null
+
+          echo "Production Smoke Test PASSED"
