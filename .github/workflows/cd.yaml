@@ -16,7 +16,7 @@ concurrency:
 jobs:
   staging:
     name: Deploy Staging
-    environment: staging
+    environment: Staging
 
     if: >-
       github.event.workflow_run.conclusion == 'success' &&
@@ -83,7 +83,7 @@ jobs:
     name: Deploy Production
     needs: staging
     runs-on: ubuntu-latest
-    environment: production
+    environment: Production
 
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
