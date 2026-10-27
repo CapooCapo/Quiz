@@ -54,6 +54,12 @@
       "namedRegex": "^/english/practice(?:/)?$"
     },
     {
+      "page": "/english/quiz-1",
+      "regex": "^/english/quiz\\-1(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/english/quiz\\-1(?:/)?$"
+    },
+    {
       "page": "/english/random",
       "regex": "^/english/random(?:/)?$",
       "routeKeys": {},

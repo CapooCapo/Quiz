@@ -40,10 +40,6 @@
   text-decoration: none;
 }
 
-.academy-module__KxkPCq__navigation a {
-  color: #69766d;
-}
-
 .academy-module__KxkPCq__navigation a:hover {
   color: #286b50;
   background: #f0f6ef;
@@ -284,14 +280,6 @@
   overflow: hidden;
 }
 
-.academy-module__KxkPCq__category2 .academy-module__KxkPCq__illustration {
-  background: #f2f1e8;
-}
-
-.academy-module__KxkPCq__category3 .academy-module__KxkPCq__illustration {
-  background: #edf1f4;
-}
-
 .academy-module__KxkPCq__illustration:after {
   content: "";
   border: 1px solid #d5e4d3;
@@ -476,10 +464,6 @@
   margin: 0;
   font-size: .7rem;
   line-height: 1.55;
-}
-
-.academy-module__KxkPCq__foundationFooter p strong {
-  color: #303d34;
 }
 
 .academy-module__KxkPCq__foundationFooter > a {
@@ -784,10 +768,6 @@
   stroke-linejoin: round;
 }
 
-.academy-module__KxkPCq__dataBar {
-  fill: #a7c9a9;
-}
-
 .academy-module__KxkPCq__chartPointGroup {
   cursor: pointer;
   outline: none;
@@ -939,14 +919,6 @@
   display: block;
 }
 
-.academy-module__KxkPCq__correctExample {
-  color: #277343;
-}
-
-.academy-module__KxkPCq__incorrectExample {
-  color: #a34f43;
-}
-
 .academy-module__KxkPCq__choiceRow {
   color: #526157;
   align-items: flex-start;
@@ -1046,10 +1018,6 @@
 
 .academy-module__KxkPCq__mistakeBox p, .academy-module__KxkPCq__practiceBox p {
   margin: 5px 0;
-}
-
-.academy-module__KxkPCq__mistakeBox small {
-  color: #777;
 }
 
 .academy-module__KxkPCq__practiceBox {
@@ -1334,6 +1302,358 @@
   .academy-module__KxkPCq__writingHeader, .academy-module__KxkPCq__actionRow {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+.academy-module__KxkPCq__page {
+  background: var(--wc-bg);
+  color: var(--wc-text);
+}
+
+.academy-module__KxkPCq__header {
+  border-color: var(--wc-line);
+  background: var(--wc-surface);
+}
+
+.academy-module__KxkPCq__brand {
+  color: var(--wc-text);
+}
+
+.academy-module__KxkPCq__brand span, .academy-module__KxkPCq__eyebrow, .academy-module__KxkPCq__hero h1 em, .academy-module__KxkPCq__foundationBottom strong, .academy-module__KxkPCq__foundationFooter > a, .academy-module__KxkPCq__dataDetails > a, .academy-module__KxkPCq__lessonPanel code, .academy-module__KxkPCq__vocabCard code, .academy-module__KxkPCq__exerciseSteps [aria-current="step"], .academy-module__KxkPCq__graphicCore {
+  color: var(--wc-accent);
+}
+
+.academy-module__KxkPCq__navigation a {
+  color: var(--wc-muted);
+}
+
+.academy-module__KxkPCq__navigation a:hover, .academy-module__KxkPCq__navigation span {
+  background: var(--wc-accent-soft);
+  color: var(--wc-accent);
+}
+
+.academy-module__KxkPCq__navigation span {
+  font-weight: 700;
+}
+
+.academy-module__KxkPCq__themeToggle {
+  border: 1px solid var(--wc-line);
+  background: var(--wc-control);
+  color: var(--wc-text);
+  border-radius: 7px;
+  padding: 9px 12px;
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+.academy-module__KxkPCq__themeToggle:hover {
+  border-color: var(--wc-accent);
+}
+
+.academy-module__KxkPCq__hero {
+  border-color: var(--wc-line);
+}
+
+.academy-module__KxkPCq__heroDescription, .academy-module__KxkPCq__foundationNote, .academy-module__KxkPCq__foundationTop, .academy-module__KxkPCq__foundationBottom, .academy-module__KxkPCq__graphicOrbit, .academy-module__KxkPCq__sectionHeading > p, .academy-module__KxkPCq__categoryLabel, .academy-module__KxkPCq__categoryDescription, .academy-module__KxkPCq__categoryMeta, .academy-module__KxkPCq__foundationFooter p, .academy-module__KxkPCq__lessonInfo small, .academy-module__KxkPCq__chartHeading p:not(.academy-module__KxkPCq__eyebrow), .academy-module__KxkPCq__dataDetails, .academy-module__KxkPCq__dataNote, .academy-module__KxkPCq__lessonNavButton, .academy-module__KxkPCq__leadText, .academy-module__KxkPCq__vocabCard > p, .academy-module__KxkPCq__mutedNote, .academy-module__KxkPCq__exerciseSteps, .academy-module__KxkPCq__typeList, .academy-module__KxkPCq__writingHeader p, .academy-module__KxkPCq__writingField small, .academy-module__KxkPCq__charCount, .academy-module__KxkPCq__criterionCard p, .academy-module__KxkPCq__criterionCard small {
+  color: var(--wc-muted);
+}
+
+.academy-module__KxkPCq__eyebrow span, .academy-module__KxkPCq__liveDot {
+  background: var(--wc-success);
+}
+
+.academy-module__KxkPCq__eyebrow span {
+  box-shadow: 0 0 0 4px var(--wc-success-bg);
+}
+
+.academy-module__KxkPCq__liveDot {
+  box-shadow: 0 0 0 5px var(--wc-success-bg);
+}
+
+.academy-module__KxkPCq__primaryAction, .academy-module__KxkPCq__smallAction, .academy-module__KxkPCq__activeTab, .academy-module__KxkPCq__activeFilter {
+  border-color: var(--wc-accent);
+  background: var(--wc-accent);
+  color: var(--wc-accent-contrast);
+}
+
+.academy-module__KxkPCq__primaryAction:hover, .academy-module__KxkPCq__smallAction:hover:not(:disabled) {
+  background: var(--wc-accent-hover);
+}
+
+.academy-module__KxkPCq__primaryAction:disabled, .academy-module__KxkPCq__smallAction:disabled {
+  opacity: .5;
+}
+
+.academy-module__KxkPCq__foundationCard {
+  border-color: var(--wc-line);
+  background: var(--wc-surface-soft);
+  box-shadow: 0 18px 45px color-mix(in srgb, var(--wc-text) 8%, transparent);
+}
+
+.academy-module__KxkPCq__graphicRing {
+  border-color: var(--wc-line);
+  box-shadow: 0 0 0 23px color-mix(in srgb, var(--wc-accent) 7%, var(--wc-surface-soft)),
+    0 0 0 24px var(--wc-line);
+}
+
+.academy-module__KxkPCq__graphicCore {
+  border-color: var(--wc-line);
+  background: var(--wc-control);
+  box-shadow: 0 9px 26px color-mix(in srgb, var(--wc-text) 9%, transparent);
+}
+
+.academy-module__KxkPCq__foundationBottom, .academy-module__KxkPCq__foundationFooter, .academy-module__KxkPCq__tabList, .academy-module__KxkPCq__categoryMeta, .academy-module__KxkPCq__tableWrap th, .academy-module__KxkPCq__tableWrap td {
+  border-color: var(--wc-line);
+}
+
+.academy-module__KxkPCq__categoryCard, .academy-module__KxkPCq__lessonCard, .academy-module__KxkPCq__chartCard, .academy-module__KxkPCq__lessonPanel, .academy-module__KxkPCq__vocabCard, .academy-module__KxkPCq__criterionCard, .academy-module__KxkPCq__reviewItem {
+  border-color: var(--wc-line);
+  background: var(--wc-surface);
+  color: var(--wc-text);
+}
+
+.academy-module__KxkPCq__categoryCard:hover, .academy-module__KxkPCq__chartCard {
+  box-shadow: 0 14px 32px color-mix(in srgb, var(--wc-text) 7%, transparent);
+}
+
+.academy-module__KxkPCq__illustration {
+  background: color-mix(in srgb, var(--wc-success) 7%, var(--wc-surface-soft));
+}
+
+.academy-module__KxkPCq__category2 .academy-module__KxkPCq__illustration {
+  background: color-mix(in srgb, var(--ctp-yellow) 7%, var(--wc-surface-soft));
+}
+
+.academy-module__KxkPCq__category3 .academy-module__KxkPCq__illustration {
+  background: color-mix(in srgb, var(--ctp-blue) 7%, var(--wc-surface-soft));
+}
+
+.academy-module__KxkPCq__illustration:after, .academy-module__KxkPCq__category2 .academy-module__KxkPCq__illustration:after, .academy-module__KxkPCq__category3 .academy-module__KxkPCq__illustration:after {
+  border-color: var(--wc-line);
+}
+
+.academy-module__KxkPCq__illustrationIndex {
+  color: var(--wc-muted);
+}
+
+.academy-module__KxkPCq__chartBars {
+  fill: color-mix(in srgb, var(--wc-success) 35%, var(--wc-surface));
+  stroke: var(--wc-success);
+}
+
+.academy-module__KxkPCq__chartLine, .academy-module__KxkPCq__dataLine {
+  stroke: var(--wc-accent);
+}
+
+.academy-module__KxkPCq__chartPoint, .academy-module__KxkPCq__dataPoint {
+  fill: var(--wc-control);
+  stroke: var(--wc-accent);
+}
+
+.academy-module__KxkPCq__mapLines {
+  stroke: var(--wc-disabled);
+}
+
+.academy-module__KxkPCq__mapRoute {
+  stroke: var(--wc-warning);
+}
+
+.academy-module__KxkPCq__mapStart {
+  fill: var(--wc-control);
+  stroke: var(--wc-warning);
+}
+
+.academy-module__KxkPCq__mapEnd {
+  fill: var(--wc-warning);
+  stroke: var(--wc-control);
+}
+
+.academy-module__KxkPCq__essayPaper {
+  fill: var(--wc-control);
+  stroke: var(--wc-disabled);
+}
+
+.academy-module__KxkPCq__essayLines {
+  stroke: var(--wc-line);
+}
+
+.academy-module__KxkPCq__essaySeal {
+  fill: var(--wc-success-bg);
+  stroke: var(--wc-success);
+}
+
+.academy-module__KxkPCq__essayCheck {
+  stroke: var(--wc-success);
+}
+
+.academy-module__KxkPCq__status, .academy-module__KxkPCq__noBand {
+  color: var(--wc-text);
+  background: var(--wc-warning-bg);
+}
+
+.academy-module__KxkPCq__footerMark {
+  background: var(--wc-accent-soft);
+  color: var(--wc-accent);
+}
+
+.academy-module__KxkPCq__foundationFooter p strong {
+  color: var(--wc-text);
+}
+
+.academy-module__KxkPCq__tab, .academy-module__KxkPCq__filterButton {
+  border-color: var(--wc-line);
+  color: var(--wc-muted);
+  background: none;
+}
+
+.academy-module__KxkPCq__tab:hover, .academy-module__KxkPCq__selectedLesson {
+  background: var(--wc-accent-soft);
+  color: var(--wc-accent);
+}
+
+.academy-module__KxkPCq__lessonCard:hover {
+  border-color: var(--wc-accent);
+  background: var(--wc-accent-soft);
+}
+
+.academy-module__KxkPCq__lessonDone {
+  border-color: var(--wc-success);
+  background: var(--wc-success-bg);
+}
+
+.academy-module__KxkPCq__lessonNumber, .academy-module__KxkPCq__lessonTime {
+  color: var(--wc-success);
+}
+
+.academy-module__KxkPCq__sourceBadge {
+  background: var(--wc-success-bg);
+  color: var(--wc-text);
+}
+
+.academy-module__KxkPCq__gridLine {
+  stroke: var(--wc-line);
+}
+
+.academy-module__KxkPCq__axisText {
+  fill: var(--ctp-subtext-1);
+}
+
+.academy-module__KxkPCq__dataBar {
+  fill: color-mix(in srgb, var(--wc-accent) 35%, var(--wc-surface));
+}
+
+.academy-module__KxkPCq__chartPointGroup:focus circle {
+  stroke: var(--wc-focus);
+}
+
+.academy-module__KxkPCq__chartObservation {
+  border-color: var(--wc-accent);
+  background: var(--wc-surface-soft);
+  color: var(--wc-text);
+}
+
+.academy-module__KxkPCq__selectedLesson span, .academy-module__KxkPCq__lessonNavButton span {
+  color: var(--wc-muted);
+}
+
+.academy-module__KxkPCq__lessonPanel code, .academy-module__KxkPCq__vocabCard code {
+  background: var(--wc-surface-soft);
+}
+
+.academy-module__KxkPCq__correctExample {
+  color: var(--wc-success);
+}
+
+.academy-module__KxkPCq__incorrectExample {
+  color: var(--wc-danger);
+}
+
+.academy-module__KxkPCq__choiceRow, .academy-module__KxkPCq__writingField, .academy-module__KxkPCq__vocabIdeas {
+  color: var(--wc-text);
+}
+
+.academy-module__KxkPCq__filterButton, .academy-module__KxkPCq__practiceBox input, .academy-module__KxkPCq__writingField textarea, .academy-module__KxkPCq__bodyInput, .academy-module__KxkPCq__tokenButton, .academy-module__KxkPCq__answerTokens button {
+  border-color: var(--wc-line);
+  background: var(--wc-control);
+  color: var(--wc-text);
+}
+
+.academy-module__KxkPCq__activeFilter {
+  border-color: var(--wc-accent);
+}
+
+.academy-module__KxkPCq__vocabCard blockquote, .academy-module__KxkPCq__practiceBox, .academy-module__KxkPCq__inlineNote, .academy-module__KxkPCq__refinedBlock {
+  border-color: var(--wc-success);
+  background: var(--wc-success-bg);
+  color: var(--wc-text) !important;
+}
+
+.academy-module__KxkPCq__mistakeBox {
+  border: 1px solid var(--wc-warning);
+  background: var(--wc-warning-bg);
+  color: var(--wc-text);
+}
+
+.academy-module__KxkPCq__mistakeBox small {
+  color: var(--wc-muted);
+}
+
+.academy-module__KxkPCq__progressTrack {
+  background: var(--wc-line);
+}
+
+.academy-module__KxkPCq__progressTrack span {
+  background: var(--wc-success);
+}
+
+.academy-module__KxkPCq__correctFeedback {
+  border-left: 4px solid var(--wc-success);
+  background: var(--wc-success-bg);
+  color: var(--wc-text);
+}
+
+.academy-module__KxkPCq__correctFeedback strong {
+  color: var(--wc-success);
+}
+
+.academy-module__KxkPCq__incorrectFeedback {
+  border-left: 4px solid var(--wc-danger);
+  background: var(--wc-danger-bg);
+  color: var(--wc-danger);
+}
+
+.academy-module__KxkPCq__tokenUsed {
+  border-color: var(--wc-line);
+  background: var(--wc-surface-soft);
+  color: var(--wc-disabled);
+}
+
+.academy-module__KxkPCq__answerTokens button {
+  border-color: var(--wc-accent);
+  background: var(--wc-accent-soft);
+  color: var(--wc-accent);
+}
+
+.academy-module__KxkPCq__noBand {
+  border: 1px solid var(--wc-warning);
+}
+
+.academy-module__KxkPCq__criterionCard > span {
+  color: var(--wc-muted);
+}
+
+.academy-module__KxkPCq__refinedBlock {
+  border-left-color: var(--wc-success);
+}
+
+@media (max-width: 600px) {
+  .academy-module__KxkPCq__navigation {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .academy-module__KxkPCq__themeToggle {
+    padding: 8px;
   }
 }
 

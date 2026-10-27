@@ -10,6 +10,7 @@ import { LessonCard } from './components/LessonCard'
 import { visualLessons } from './data/lessons'
 import styles from './academy.module.css'
 
+const THEME_KEY = 'kotoba-en-theme-v1'
 const tabs = ['Explore', 'Introduction & overview', 'Vocabulary & grammar', 'Body paragraphs', 'Quiz & progress', 'Full writing'] as const
 export type AcademyTab = typeof tabs[number]
 
@@ -17,13 +18,26 @@ export default function IELTSWritingAcademy() {
   const [tab, setTab] = useState<AcademyTab>('Explore')
   const [selectedLesson, setSelectedLesson] = useState<string | null>(null)
   const [completed, setCompleted] = useState<string[]>([])
+  const [theme, setTheme] = useState<'light' | 'dark'>('light')
   useEffect(() => { try { const saved=localStorage.getItem('wordcraft-ielts-progress-v1'); if(saved) startTransition(() => setCompleted(JSON.parse(saved))) } catch { /* Ignore malformed local progress and keep the page usable. */ } }, [])
   useEffect(() => { if (window.location.hash === '#quiz') startTransition(() => setTab('Quiz & progress')) }, [])
+  useEffect(() => {
+    let saved: string | null = null
+    try { saved = localStorage.getItem(THEME_KEY) } catch { /* Use the system preference. */ }
+    const preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    startTransition(() => setTheme(saved === 'dark' || saved === 'light' ? saved : preferred))
+  }, [])
+  useEffect(() => { document.documentElement.dataset.theme = theme }, [theme])
+  const toggleTheme = () => {
+    const nextTheme = theme === 'light' ? 'dark' : 'light'
+    setTheme(nextTheme)
+    try { localStorage.setItem(THEME_KEY, nextTheme) } catch { /* Apply for this visit. */ }
+  }
   const markCompleted = (id:string) => setCompleted((current)=>{ const next=current.includes(id)?current:[...current,id]; try{localStorage.setItem('wordcraft-ielts-progress-v1',JSON.stringify(next))}catch{/* storage may be unavailable */} return next })
   return <div className={styles.page}>
     <header className={styles.header}>
       <Link className={styles.brand} href="/">word<span>craft</span></Link>
-      <nav className={styles.navigation} aria-label="Main navigation"><Link href="/english/practice">Vocabulary</Link><span aria-current="page">Writing Academy</span></nav>
+      <nav className={styles.navigation} aria-label="Main navigation"><Link href="/english/practice">Vocabulary</Link><span aria-current="page">Writing Academy</span><button className={styles.themeToggle} type="button" onClick={toggleTheme} aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`} aria-pressed={theme === 'dark'}>{theme === 'light' ? '☾ Dark' : '☀ Light'}</button></nav>
     </header>
     <main className={styles.main}>
       <section className={styles.hero} aria-labelledby="academy-title">
