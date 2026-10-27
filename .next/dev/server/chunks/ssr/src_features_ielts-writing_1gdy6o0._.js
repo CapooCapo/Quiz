@@ -32,6 +32,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$features$2f$ielts$2d$
 ;
 ;
 ;
+const THEME_KEY = 'kotoba-en-theme-v1';
 const tabs = [
     'Explore',
     'Introduction & overview',
@@ -44,12 +45,36 @@ function IELTSWritingAcademy() {
     const [tab, setTab] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('Explore');
     const [selectedLesson, setSelectedLesson] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const [completed, setCompleted] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [theme, setTheme] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('light');
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         try {
             const saved = localStorage.getItem('wordcraft-ielts-progress-v1');
-            if (saved) setCompleted(JSON.parse(saved));
+            if (saved) (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["startTransition"])(()=>setCompleted(JSON.parse(saved)));
         } catch  {}
     }, []);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        if (window.location.hash === '#quiz') (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["startTransition"])(()=>setTab('Quiz & progress'));
+    }, []);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        let saved = null;
+        try {
+            saved = localStorage.getItem(THEME_KEY);
+        } catch  {}
+        const preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["startTransition"])(()=>setTheme(saved === 'dark' || saved === 'light' ? saved : preferred));
+    }, []);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
+        document.documentElement.dataset.theme = theme;
+    }, [
+        theme
+    ]);
+    const toggleTheme = ()=>{
+        const nextTheme = theme === 'light' ? 'dark' : 'light';
+        setTheme(nextTheme);
+        try {
+            localStorage.setItem(THEME_KEY, nextTheme);
+        } catch  {}
+    };
     const markCompleted = (id)=>setCompleted((current)=>{
             const next = current.includes(id) ? current : [
                 ...current,
@@ -75,13 +100,13 @@ function IELTSWritingAcademy() {
                                 children: "craft"
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 24,
+                                lineNumber: 39,
                                 columnNumber: 51
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                        lineNumber: 24,
+                        lineNumber: 39,
                         columnNumber: 7
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("nav", {
@@ -93,7 +118,7 @@ function IELTSWritingAcademy() {
                                 children: "Vocabulary"
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 25,
+                                lineNumber: 40,
                                 columnNumber: 71
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -101,19 +126,31 @@ function IELTSWritingAcademy() {
                                 children: "Writing Academy"
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 25,
+                                lineNumber: 40,
                                 columnNumber: 119
+                            }, this),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$features$2f$ielts$2d$writing$2f$academy$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].themeToggle,
+                                type: "button",
+                                onClick: toggleTheme,
+                                "aria-label": `Switch to ${theme === 'light' ? 'dark' : 'light'} theme`,
+                                "aria-pressed": theme === 'dark',
+                                children: theme === 'light' ? '☾ Dark' : '☀ Light'
+                            }, void 0, false, {
+                                fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
+                                lineNumber: 40,
+                                columnNumber: 167
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                        lineNumber: 25,
+                        lineNumber: 40,
                         columnNumber: 7
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                lineNumber: 23,
+                lineNumber: 38,
                 columnNumber: 5
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -131,14 +168,14 @@ function IELTSWritingAcademy() {
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {}, void 0, false, {
                                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                lineNumber: 29,
+                                                lineNumber: 44,
                                                 columnNumber: 72
                                             }, this),
                                             " IELTS ACADEMIC · WRITING"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 29,
+                                        lineNumber: 44,
                                         columnNumber: 42
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
@@ -149,13 +186,13 @@ function IELTSWritingAcademy() {
                                                 children: "clearer."
                                             }, void 0, false, {
                                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                lineNumber: 29,
+                                                lineNumber: 44,
                                                 columnNumber: 150
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 29,
+                                        lineNumber: 44,
                                         columnNumber: 109
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -163,7 +200,7 @@ function IELTSWritingAcademy() {
                                         children: "Learn to read visuals, choose the details that matter, and build confident, well-structured responses—one skill at a time."
                                     }, void 0, false, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 29,
+                                        lineNumber: 44,
                                         columnNumber: 172
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -179,13 +216,13 @@ function IELTSWritingAcademy() {
                                                         children: "↓"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                        lineNumber: 29,
+                                                        lineNumber: 44,
                                                         columnNumber: 452
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                lineNumber: 29,
+                                                lineNumber: 44,
                                                 columnNumber: 372
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -196,19 +233,19 @@ function IELTSWritingAcademy() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                lineNumber: 29,
+                                                lineNumber: 44,
                                                 columnNumber: 489
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 29,
+                                        lineNumber: 44,
                                         columnNumber: 336
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 29,
+                                lineNumber: 44,
                                 columnNumber: 9
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("aside", {
@@ -222,20 +259,20 @@ function IELTSWritingAcademy() {
                                                 children: "ACADEMY / TASK 1"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                lineNumber: 30,
+                                                lineNumber: 45,
                                                 columnNumber: 118
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                 className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$features$2f$ielts$2d$writing$2f$academy$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].liveDot
                                             }, void 0, false, {
                                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                lineNumber: 30,
+                                                lineNumber: 45,
                                                 columnNumber: 147
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 30,
+                                        lineNumber: 45,
                                         columnNumber: 80
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -246,7 +283,7 @@ function IELTSWritingAcademy() {
                                                 className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$features$2f$ielts$2d$writing$2f$academy$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].graphicRing
                                             }, void 0, false, {
                                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                lineNumber: 30,
+                                                lineNumber: 45,
                                                 columnNumber: 248
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -254,7 +291,7 @@ function IELTSWritingAcademy() {
                                                 children: "W"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                lineNumber: 30,
+                                                lineNumber: 45,
                                                 columnNumber: 286
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -263,26 +300,26 @@ function IELTSWritingAcademy() {
                                                     "READ",
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {}, void 0, false, {
                                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                        lineNumber: 30,
+                                                        lineNumber: 45,
                                                         columnNumber: 373
                                                     }, this),
                                                     "→ PLAN",
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {}, void 0, false, {
                                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                        lineNumber: 30,
+                                                        lineNumber: 45,
                                                         columnNumber: 384
                                                     }, this),
                                                     "→ WRITE"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                lineNumber: 30,
+                                                lineNumber: 45,
                                                 columnNumber: 331
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 30,
+                                        lineNumber: 45,
                                         columnNumber: 187
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -292,7 +329,7 @@ function IELTSWritingAcademy() {
                                                 children: "LEARNING SYSTEM"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                lineNumber: 30,
+                                                lineNumber: 45,
                                                 columnNumber: 450
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
@@ -302,25 +339,25 @@ function IELTSWritingAcademy() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                lineNumber: 30,
+                                                lineNumber: 45,
                                                 columnNumber: 478
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 30,
+                                        lineNumber: 45,
                                         columnNumber: 409
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 30,
+                                lineNumber: 45,
                                 columnNumber: 9
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                        lineNumber: 28,
+                        lineNumber: 43,
                         columnNumber: 7
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -332,6 +369,7 @@ function IELTSWritingAcademy() {
                                 role: "tablist",
                                 "aria-label": "Academy learning areas",
                                 children: tabs.map((name)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                        id: name === 'Quiz & progress' ? 'quiz' : undefined,
                                         type: "button",
                                         role: "tab",
                                         "aria-selected": tab === name,
@@ -343,12 +381,12 @@ function IELTSWritingAcademy() {
                                         children: name
                                     }, name, false, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 33,
+                                        lineNumber: 48,
                                         columnNumber: 110
                                     }, this))
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 33,
+                                lineNumber: 48,
                                 columnNumber: 9
                             }, this),
                             tab === 'Explore' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
@@ -363,33 +401,33 @@ function IELTSWritingAcademy() {
                                                         children: "YOUR LEARNING MAP"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                        lineNumber: 35,
+                                                        lineNumber: 50,
                                                         columnNumber: 55
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                                                         children: "Choose a writing track"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                        lineNumber: 35,
+                                                        lineNumber: 50,
                                                         columnNumber: 106
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                lineNumber: 35,
+                                                lineNumber: 50,
                                                 columnNumber: 50
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                 children: "Lessons, sourced charts, practice and writing tools in one place."
                                             }, void 0, false, {
                                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                lineNumber: 35,
+                                                lineNumber: 50,
                                                 columnNumber: 143
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 35,
+                                        lineNumber: 50,
                                         columnNumber: 11
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -399,12 +437,12 @@ function IELTSWritingAcademy() {
                                                 index: index
                                             }, category.id, false, {
                                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                lineNumber: 36,
+                                                lineNumber: 51,
                                                 columnNumber: 89
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 36,
+                                        lineNumber: 51,
                                         columnNumber: 11
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -417,33 +455,33 @@ function IELTSWritingAcademy() {
                                                         children: "VISUAL LEARNING"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                        lineNumber: 37,
+                                                        lineNumber: 52,
                                                         columnNumber: 55
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                                                         children: "Learn from real data"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                        lineNumber: 37,
+                                                        lineNumber: 52,
                                                         columnNumber: 104
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                lineNumber: 37,
+                                                lineNumber: 52,
                                                 columnNumber: 50
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                 children: "Keyboard-accessible points, explanations and a full data table accompany each chart."
                                             }, void 0, false, {
                                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                lineNumber: 37,
+                                                lineNumber: 52,
                                                 columnNumber: 139
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 37,
+                                        lineNumber: 52,
                                         columnNumber: 11
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -455,19 +493,19 @@ function IELTSWritingAcademy() {
                                                 onOpen: ()=>setSelectedLesson(lesson.id)
                                             }, lesson.id, false, {
                                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                lineNumber: 38,
+                                                lineNumber: 53,
                                                 columnNumber: 81
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 38,
+                                        lineNumber: 53,
                                         columnNumber: 11
                                     }, this),
                                     (selectedLesson === 'compare-categories' ? __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$features$2f$ielts$2d$writing$2f$data$2f$charts$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["chartDatasets"][1] : __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$features$2f$ielts$2d$writing$2f$data$2f$charts$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["chartDatasets"][0]) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$features$2f$ielts$2d$writing$2f$components$2f$ChartViewer$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ChartViewer"], {
                                         dataset: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$features$2f$ielts$2d$writing$2f$data$2f$charts$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["chartDatasets"][selectedLesson === 'compare-categories' ? 1 : 0]
                                     }, void 0, false, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 39,
+                                        lineNumber: 54,
                                         columnNumber: 87
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -475,13 +513,13 @@ function IELTSWritingAcademy() {
                                         children: "Numerical data: World Bank World Development Indicators (IEA source). Values are rounded to two decimal places for display."
                                     }, void 0, false, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 40,
+                                        lineNumber: 55,
                                         columnNumber: 11
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 34,
+                                lineNumber: 49,
                                 columnNumber: 27
                             }, this),
                             tab !== 'Explore' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(LearningWorkspace, {
@@ -489,13 +527,13 @@ function IELTSWritingAcademy() {
                                 onComplete: markCompleted
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 42,
+                                lineNumber: 57,
                                 columnNumber: 27
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                        lineNumber: 32,
+                        lineNumber: 47,
                         columnNumber: 7
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("footer", {
@@ -508,7 +546,7 @@ function IELTSWritingAcademy() {
                                         children: "IELTS"
                                     }, void 0, false, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 44,
+                                        lineNumber: 59,
                                         columnNumber: 56
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -517,25 +555,25 @@ function IELTSWritingAcademy() {
                                                 children: "Learn accurately, write clearly"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                lineNumber: 44,
+                                                lineNumber: 59,
                                                 columnNumber: 107
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {}, void 0, false, {
                                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                                lineNumber: 44,
+                                                lineNumber: 59,
                                                 columnNumber: 155
                                             }, this),
                                             "Progress and drafts are stored in this browser."
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 44,
+                                        lineNumber: 59,
                                         columnNumber: 104
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 44,
+                                lineNumber: 59,
                                 columnNumber: 51
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -547,71 +585,68 @@ function IELTSWritingAcademy() {
                                         children: "↗"
                                     }, void 0, false, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 44,
+                                        lineNumber: 59,
                                         columnNumber: 278
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 44,
+                                lineNumber: 59,
                                 columnNumber: 217
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                        lineNumber: 44,
+                        lineNumber: 59,
                         columnNumber: 7
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                lineNumber: 27,
+                lineNumber: 42,
                 columnNumber: 5
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-        lineNumber: 22,
+        lineNumber: 37,
         columnNumber: 10
     }, this);
 }
 function LearningWorkspace({ tab, onComplete }) {
-    const [index, setIndex] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0);
-    const [answer, setAnswer] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])('');
-    const [checked, setChecked] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     if (tab === 'Introduction & overview') return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(TeachingWorkspace, {
         onComplete: onComplete
     }, void 0, false, {
         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-        lineNumber: 53,
+        lineNumber: 65,
         columnNumber: 46
     }, this);
     if (tab === 'Vocabulary & grammar') return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(VocabularyWorkspace, {
         onComplete: onComplete
     }, void 0, false, {
         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-        lineNumber: 54,
+        lineNumber: 66,
         columnNumber: 43
     }, this);
     if (tab === 'Body paragraphs') return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$features$2f$ielts$2d$writing$2f$components$2f$BodyWorkspace$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["BodyWorkspace"], {
         onComplete: onComplete
     }, void 0, false, {
         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-        lineNumber: 55,
+        lineNumber: 67,
         columnNumber: 38
     }, this);
     if (tab === 'Quiz & progress') return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$features$2f$ielts$2d$writing$2f$components$2f$QuizWorkspace$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["QuizWorkspace"], {
         onComplete: onComplete
     }, void 0, false, {
         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-        lineNumber: 56,
+        lineNumber: 68,
         columnNumber: 38
     }, this);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$features$2f$ielts$2d$writing$2f$components$2f$WritingWorkspace$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["WritingWorkspace"], {
         onComplete: onComplete
     }, void 0, false, {
         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-        lineNumber: 57,
+        lineNumber: 69,
         columnNumber: 10
     }, this);
 }
@@ -639,7 +674,7 @@ function TeachingWorkspace({ onComplete }) {
                         children: "INTRODUCTION · OVERVIEW"
                     }, void 0, false, {
                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                        lineNumber: 69,
+                        lineNumber: 81,
                         columnNumber: 90
                     }, this),
                     all.map((lesson, i)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -654,20 +689,20 @@ function TeachingWorkspace({ onComplete }) {
                                     children: String(i + 1).padStart(2, '0')
                                 }, void 0, false, {
                                     fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                    lineNumber: 69,
+                                    lineNumber: 81,
                                     columnNumber: 337
                                 }, this),
                                 lesson.title
                             ]
                         }, lesson.id, true, {
                             fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                            lineNumber: 69,
+                            lineNumber: 81,
                             columnNumber: 168
                         }, this))
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                lineNumber: 69,
+                lineNumber: 81,
                 columnNumber: 47
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("article", {
@@ -678,14 +713,14 @@ function TeachingWorkspace({ onComplete }) {
                         children: chosen.skill
                     }, void 0, false, {
                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                        lineNumber: 69,
+                        lineNumber: 81,
                         columnNumber: 454
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                         children: chosen.title
                     }, void 0, false, {
                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                        lineNumber: 69,
+                        lineNumber: 81,
                         columnNumber: 502
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -693,7 +728,7 @@ function TeachingWorkspace({ onComplete }) {
                         children: chosen.objective
                     }, void 0, false, {
                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                        lineNumber: 69,
+                        lineNumber: 81,
                         columnNumber: 525
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -703,35 +738,35 @@ function TeachingWorkspace({ onComplete }) {
                                 children: "Giải thích"
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 69,
+                                lineNumber: 81,
                                 columnNumber: 618
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 children: chosen.explanationVi
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 69,
+                                lineNumber: 81,
                                 columnNumber: 637
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                                 children: "Grammar structure"
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 69,
+                                lineNumber: 81,
                                 columnNumber: 666
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("code", {
                                 children: chosen.grammar
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 69,
+                                lineNumber: 81,
                                 columnNumber: 692
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                                 children: "Examples"
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 69,
+                                lineNumber: 81,
                                 columnNumber: 721
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -742,7 +777,7 @@ function TeachingWorkspace({ onComplete }) {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 69,
+                                lineNumber: 81,
                                 columnNumber: 738
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -753,27 +788,27 @@ function TeachingWorkspace({ onComplete }) {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 69,
+                                lineNumber: 81,
                                 columnNumber: 804
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                                 children: "Alternative expressions"
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 69,
+                                lineNumber: 81,
                                 columnNumber: 874
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 children: chosen.alternatives.join(' · ')
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 69,
+                                lineNumber: 81,
                                 columnNumber: 906
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                        lineNumber: 69,
+                        lineNumber: 81,
                         columnNumber: 578
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -783,14 +818,14 @@ function TeachingWorkspace({ onComplete }) {
                                 children: "Guided quiz"
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 69,
+                                lineNumber: 81,
                                 columnNumber: 996
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 children: chosen.guidedQuestion.prompt
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 69,
+                                lineNumber: 81,
                                 columnNumber: 1016
                             }, this),
                             chosen.guidedQuestion.options.map((option)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
@@ -807,14 +842,14 @@ function TeachingWorkspace({ onComplete }) {
                                             }
                                         }, void 0, false, {
                                             fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                            lineNumber: 69,
+                                            lineNumber: 81,
                                             columnNumber: 1147
                                         }, this),
                                         option
                                     ]
                                 }, option, true, {
                                     fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                    lineNumber: 69,
+                                    lineNumber: 81,
                                     columnNumber: 1098
                                 }, this)),
                             checked && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -825,7 +860,7 @@ function TeachingWorkspace({ onComplete }) {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 69,
+                                lineNumber: 81,
                                 columnNumber: 1304
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -835,13 +870,13 @@ function TeachingWorkspace({ onComplete }) {
                                 children: "Check answer"
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 69,
+                                lineNumber: 81,
                                 columnNumber: 1505
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                        lineNumber: 69,
+                        lineNumber: 81,
                         columnNumber: 956
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -851,27 +886,27 @@ function TeachingWorkspace({ onComplete }) {
                                 children: "Chart-based exercise"
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 69,
+                                lineNumber: 81,
                                 columnNumber: 1665
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 children: chosen.chartExercise
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 69,
+                                lineNumber: 81,
                                 columnNumber: 1694
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                        lineNumber: 69,
+                        lineNumber: 81,
                         columnNumber: 1625
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$features$2f$ielts$2d$writing$2f$components$2f$ChartViewer$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ChartViewer"], {
                         dataset: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$features$2f$ielts$2d$writing$2f$data$2f$charts$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["chartDatasets"][chosen.id === "highest-lowest" ? 1 : 0]
                     }, void 0, false, {
                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                        lineNumber: 69,
+                        lineNumber: 81,
                         columnNumber: 1733
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -880,19 +915,19 @@ function TeachingWorkspace({ onComplete }) {
                         children: "Mark lesson complete ✓"
                     }, void 0, false, {
                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                        lineNumber: 69,
+                        lineNumber: 81,
                         columnNumber: 1805
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                lineNumber: 69,
+                lineNumber: 81,
                 columnNumber: 412
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-        lineNumber: 69,
+        lineNumber: 81,
         columnNumber: 10
     }, this);
 }
@@ -917,33 +952,33 @@ function VocabularyWorkspace({ onComplete }) {
                                 children: "VOCABULARY & GRAMMAR"
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 75,
+                                lineNumber: 87,
                                 columnNumber: 56
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                                 children: "Describe change precisely"
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 75,
+                                lineNumber: 87,
                                 columnNumber: 110
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                        lineNumber: 75,
+                        lineNumber: 87,
                         columnNumber: 51
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                         children: "Patterns clarify which number is a start, endpoint, or difference."
                     }, void 0, false, {
                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                        lineNumber: 75,
+                        lineNumber: 87,
                         columnNumber: 150
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                lineNumber: 75,
+                lineNumber: 87,
                 columnNumber: 12
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -954,12 +989,12 @@ function VocabularyWorkspace({ onComplete }) {
                         children: name
                     }, name, false, {
                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                        lineNumber: 75,
+                        lineNumber: 87,
                         columnNumber: 281
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                lineNumber: 75,
+                lineNumber: 87,
                 columnNumber: 229
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -971,7 +1006,7 @@ function VocabularyWorkspace({ onComplete }) {
                                 direction: card.chartDirection
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 75,
+                                lineNumber: 87,
                                 columnNumber: 520
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -979,14 +1014,14 @@ function VocabularyWorkspace({ onComplete }) {
                                 children: card.group
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 75,
+                                lineNumber: 87,
                                 columnNumber: 564
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
                                 children: card.term
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 75,
+                                lineNumber: 87,
                                 columnNumber: 610
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -997,34 +1032,34 @@ function VocabularyWorkspace({ onComplete }) {
                                         children: card.partOfSpeech
                                     }, void 0, false, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 75,
+                                        lineNumber: 87,
                                         columnNumber: 650
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 75,
+                                lineNumber: 87,
                                 columnNumber: 630
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("code", {
                                 children: card.pattern
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 75,
+                                lineNumber: 87,
                                 columnNumber: 682
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 children: card.usage
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 75,
+                                lineNumber: 87,
                                 columnNumber: 709
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("blockquote", {
                                 children: card.example
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 75,
+                                lineNumber: 87,
                                 columnNumber: 728
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1034,7 +1069,7 @@ function VocabularyWorkspace({ onComplete }) {
                                         children: "Common mistake"
                                     }, void 0, false, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 75,
+                                        lineNumber: 87,
                                         columnNumber: 802
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1044,20 +1079,20 @@ function VocabularyWorkspace({ onComplete }) {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 75,
+                                        lineNumber: 87,
                                         columnNumber: 833
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("small", {
                                         children: card.mistakeExplanation
                                     }, void 0, false, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 75,
+                                        lineNumber: 87,
                                         columnNumber: 862
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 75,
+                                lineNumber: 87,
                                 columnNumber: 767
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1066,7 +1101,7 @@ function VocabularyWorkspace({ onComplete }) {
                                         children: "Alternatives:"
                                     }, void 0, false, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 75,
+                                        lineNumber: 87,
                                         columnNumber: 911
                                     }, this),
                                     " ",
@@ -1074,7 +1109,7 @@ function VocabularyWorkspace({ onComplete }) {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 75,
+                                lineNumber: 87,
                                 columnNumber: 908
                             }, this),
                             card.id === 'increase' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1082,7 +1117,7 @@ function VocabularyWorkspace({ onComplete }) {
                                 children: "from A to B = start → end · by N = change amount · peak at N = maximum value · fluctuate between A and B = range"
                             }, void 0, false, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 75,
+                                lineNumber: 87,
                                 columnNumber: 999
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1092,14 +1127,14 @@ function VocabularyWorkspace({ onComplete }) {
                                         children: "Practice"
                                     }, void 0, false, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 75,
+                                        lineNumber: 87,
                                         columnNumber: 1185
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                         children: card.practice
                                     }, void 0, false, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 75,
+                                        lineNumber: 87,
                                         columnNumber: 1210
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1112,7 +1147,7 @@ function VocabularyWorkspace({ onComplete }) {
                                         placeholder: "Type a short answer"
                                     }, void 0, false, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 75,
+                                        lineNumber: 87,
                                         columnNumber: 1232
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1125,7 +1160,7 @@ function VocabularyWorkspace({ onComplete }) {
                                         children: "Check & save practice"
                                     }, void 0, false, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 75,
+                                        lineNumber: 87,
                                         columnNumber: 1397
                                     }, this),
                                     checked && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1133,30 +1168,30 @@ function VocabularyWorkspace({ onComplete }) {
                                         children: "Review the grammar pattern above and check that your preposition and value type match the chart."
                                     }, void 0, false, {
                                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                        lineNumber: 75,
+                                        lineNumber: 87,
                                         columnNumber: 1559
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                                lineNumber: 75,
+                                lineNumber: 87,
                                 columnNumber: 1149
                             }, this)
                         ]
                     }, card.id, true, {
                         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                        lineNumber: 75,
+                        lineNumber: 87,
                         columnNumber: 468
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                lineNumber: 75,
+                lineNumber: 87,
                 columnNumber: 417
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-        lineNumber: 75,
+        lineNumber: 87,
         columnNumber: 10
     }, this);
 }
@@ -1173,7 +1208,7 @@ function MiniTrend({ direction }) {
                 className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$features$2f$ielts$2d$writing$2f$academy$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].gridLine
             }, void 0, false, {
                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                lineNumber: 77,
+                lineNumber: 89,
                 columnNumber: 376
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("path", {
@@ -1181,13 +1216,13 @@ function MiniTrend({ direction }) {
                 className: __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$features$2f$ielts$2d$writing$2f$academy$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].dataLine
             }, void 0, false, {
                 fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-                lineNumber: 77,
+                lineNumber: 89,
                 columnNumber: 431
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/features/ielts-writing/IELTSWritingAcademy.tsx",
-        lineNumber: 77,
+        lineNumber: 89,
         columnNumber: 264
     }, this);
 }
@@ -1295,6 +1330,7 @@ __turbopack_context__.v({
   "tab": "academy-module__KxkPCq__tab",
   "tabList": "academy-module__KxkPCq__tabList",
   "tableWrap": "academy-module__KxkPCq__tableWrap",
+  "themeToggle": "academy-module__KxkPCq__themeToggle",
   "tokenButton": "academy-module__KxkPCq__tokenButton",
   "tokenTray": "academy-module__KxkPCq__tokenTray",
   "tokenUsed": "academy-module__KxkPCq__tokenUsed",
@@ -1372,9 +1408,11 @@ function BodyWorkspace({ onComplete }) {
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         try {
             const saved = JSON.parse(localStorage.getItem(key) || '{}');
-            setExercise(saved.exercise || '');
-            setBody1(saved.body1 || '');
-            setBody2(saved.body2 || '');
+            (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["startTransition"])(()=>{
+                setExercise(saved.exercise || '');
+                setBody1(saved.body1 || '');
+                setBody2(saved.body2 || '');
+            });
         } catch  {}
     }, []);
     const save = (next)=>{
@@ -2390,9 +2428,11 @@ function QuizWorkspace({ onComplete }) {
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         try {
             const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
-            setIndex(Math.min(saved.index || 0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$features$2f$ielts$2d$writing$2f$data$2f$assessment$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["assessmentQuestions"].length - 1));
-            setMistakes(saved.mistakes || []);
-            setDone(saved.done || []);
+            (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["startTransition"])(()=>{
+                setIndex(Math.min(saved.index || 0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$features$2f$ielts$2d$writing$2f$data$2f$assessment$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["assessmentQuestions"].length - 1));
+                setMistakes(saved.mistakes || []);
+                setDone(saved.done || []);
+            });
         } catch  {}
     }, []);
     const question = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$features$2f$ielts$2d$writing$2f$data$2f$assessment$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["assessmentQuestions"][index];
@@ -2804,11 +2844,13 @@ function WritingWorkspace({ onComplete }) {
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         try {
             const saved = JSON.parse(localStorage.getItem(key) || '{}');
-            setDraft({
-                ...blank,
-                ...saved.draft
+            (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["startTransition"])(()=>{
+                setDraft({
+                    ...blank,
+                    ...saved.draft
+                });
+                setSubmissions(saved.submissions || []);
             });
-            setSubmissions(saved.submissions || []);
         } catch  {}
     }, []);
     const feedback = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useMemo"])(()=>(0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$features$2f$ielts$2d$writing$2f$evaluateWriting$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["evaluateWriting"])(selected?.draft ?? draft), [
@@ -3552,6 +3594,90 @@ const assessmentQuestions = [
             '17.00'
         ],
         explanation: 'A valid answer should compare the two countries and retain the correct values; several grammatically correct phrasings are accepted.'
+    },
+    {
+        id: 'vocab-artificially',
+        type: 'multiple-choice',
+        prompt: 'What does “artificially” mean in “The lake was artificially created”?',
+        choices: [
+            'By human action rather than naturally',
+            'At the best possible time',
+            'In a way that is difficult to understand'
+        ],
+        answer: 'By human action rather than naturally',
+        explanation: '“Artificially” means made or caused by people, not occurring naturally.'
+    },
+    {
+        id: 'vocab-nesting',
+        type: 'multiple-choice',
+        prompt: 'What is “nesting” when describing birds?',
+        choices: [
+            'Building or using a nest to lay eggs and raise young',
+            'Moving to a warmer region for winter',
+            'Searching for food in a group'
+        ],
+        answer: 'Building or using a nest to lay eggs and raise young',
+        explanation: '“Nesting” refers to making or occupying a nest, especially for breeding.'
+    },
+    {
+        id: 'vocab-optimum',
+        type: 'multiple-choice',
+        prompt: 'Choose the closest meaning of “optimum”.',
+        choices: [
+            'The most favorable or effective',
+            'The least common',
+            'The most difficult to notice'
+        ],
+        answer: 'The most favorable or effective',
+        explanation: '“Optimum” means best or most favorable under particular conditions.'
+    },
+    {
+        id: 'vocab-obscure',
+        type: 'multiple-choice',
+        prompt: 'In “The cause remains obscure”, what does “obscure” mean?',
+        choices: [
+            'Unknown or not clearly understood',
+            'Proven to be harmless',
+            'Easy to measure'
+        ],
+        answer: 'Unknown or not clearly understood',
+        explanation: 'Here, “obscure” means unclear, not known, or difficult to understand.'
+    },
+    {
+        id: 'vocab-remedy',
+        type: 'multiple-choice',
+        prompt: 'What is a “remedy” for a problem?',
+        choices: [
+            'A solution or treatment',
+            'A warning about a risk',
+            'A detailed description'
+        ],
+        answer: 'A solution or treatment',
+        explanation: 'A remedy is something used to correct, improve, or treat a problem.'
+    },
+    {
+        id: 'vocab-reproductive',
+        type: 'multiple-choice',
+        prompt: 'What does “reproductive” relate to?',
+        choices: [
+            'Producing offspring',
+            'Adapting to cold weather',
+            'Finding shelter'
+        ],
+        answer: 'Producing offspring',
+        explanation: '“Reproductive” describes the process or ability to produce offspring.'
+    },
+    {
+        id: 'vocab-biological-toll',
+        type: 'multiple-choice',
+        prompt: 'What does “a biological toll” most nearly mean?',
+        choices: [
+            'Harm or cost to living organisms or biological systems',
+            'A fee paid to enter a protected area',
+            'A measurement of population growth'
+        ],
+        answer: 'Harm or cost to living organisms or biological systems',
+        explanation: '“Toll” means a harmful cost or effect; “biological” specifies that living organisms or biological systems are affected.'
     }
 ];
 }),

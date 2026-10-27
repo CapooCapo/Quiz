@@ -3,6 +3,7 @@
   "/_not-found/page": "/_not-found",
   "/api/ielts-writing/evaluate/route": "/api/ielts-writing/evaluate",
   "/english/practice/page": "/english/practice",
+  "/english/quiz-1/page": "/english/quiz-1",
   "/english/random/page": "/english/random",
   "/ielts-writing/page": "/ielts-writing",
   "/page": "/"

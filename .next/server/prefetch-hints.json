@@ -41,6 +41,25 @@
       }
     }
   },
+  "/english/quiz-1": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 96,
+        "slots": {
+          "children": {
+            "hints": 96,
+            "slots": {
+              "children": {
+                "hints": 160,
+                "slots": null
+              }
+            }
+          }
+        }
+      }
+    }
+  },
   "/english/random": {
     "hints": 64,
     "slots": {

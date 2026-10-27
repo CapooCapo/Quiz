@@ -21,6 +21,10 @@ Open the local URL printed by Next.js. Production uses `npm run build` and `npm 
 
 ## English practice
 
+### Quiz 1 revision pack
+
+The dedicated `/english/quiz-1` route contains all 66 entries from the supplied “Tổng hợp từ vựng sau Quizz 1” Academic English 7 PDF. It is intentionally isolated from the editable browser deck. Learners can draw 10, 20, 30, 50, or a validated custom number of unique random terms, then answer with four distinct multiple-choice meanings or a normalized Vietnamese typed meaning. Each question allows two attempts: the first mistake keeps the answer hidden, while a correct response or second mistake reveals the Vietnamese meaning, PDF pronunciation, and an English example. The completion screen can replay the same set, draw a new random set, or return to setup.
+
 - Add words manually or import JSON/CSV decks. Required headers/fields are `word` and `meaning`; optional `example` enables sentence ordering.
 - Select the vocabulary to practise with a multiple-choice meaning quiz or typed-recall quiz.
 - Choose words manually from the library, or click **Pick Random** to open a separate `/english/random` page. There you can sample 10, 20, 30, or 50 words from the complete English deck, or enter a custom positive count. Requests larger than the deck select all available words and explain the cap.
