@@ -7,5 +7,6 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body>{children}</body></html>
+  // suppressHydrationWarning: browser translation extensions add classes (e.g. "trancy-vi") to <html> before React hydrates.
+  return <html lang="en" suppressHydrationWarning><body>{children}</body></html>
 }

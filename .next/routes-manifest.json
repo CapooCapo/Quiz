@@ -21,7 +21,24 @@
     "afterFiles": [],
     "fallback": []
   },
-  "dynamicRoutes": [],
+  "dynamicRoutes": [
+    {
+      "page": "/ielts-final-exam/reading/[exercise]",
+      "regex": "^/ielts\\-final\\-exam/reading/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPexercise": "nxtPexercise"
+      },
+      "namedRegex": "^/ielts\\-final\\-exam/reading/(?<nxtPexercise>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/ielts-final-exam/writing/[id]",
+      "regex": "^/ielts\\-final\\-exam/writing/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/ielts\\-final\\-exam/writing/(?<nxtPid>[^/]+?)(?:/)?$"
+    }
+  ],
   "staticRoutes": [
     {
       "page": "/",
@@ -64,6 +81,12 @@
       "regex": "^/english/random(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/english/random(?:/)?$"
+    },
+    {
+      "page": "/ielts-final-exam",
+      "regex": "^/ielts\\-final\\-exam(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/ielts\\-final\\-exam(?:/)?$"
     },
     {
       "page": "/ielts-writing",

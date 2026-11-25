@@ -74,6 +74,33 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../../app/ielts-final-exam/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/ielts-final-exam">> = Specific
+  const handler = {} as typeof import("../../../app/ielts-final-exam/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/ielts-final-exam/reading/[exercise]/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/ielts-final-exam/reading/[exercise]">> = Specific
+  const handler = {} as typeof import("../../../app/ielts-final-exam/reading/[exercise]/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../../app/ielts-final-exam/writing/[id]/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/ielts-final-exam/writing/[id]">> = Specific
+  const handler = {} as typeof import("../../../app/ielts-final-exam/writing/[id]/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../../app/ielts-writing/page.tsx
 {
   type __IsExpected<Specific extends AppPageConfig<"/ielts-writing">> = Specific
@@ -104,6 +131,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 
 
 
+
+// Validate ../../../app/ielts-final-exam/layout.tsx
+{
+  type __IsExpected<Specific extends LayoutConfig<"/ielts-final-exam">> = Specific
+  const handler = {} as typeof import("../../../app/ielts-final-exam/layout.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
 
 // Validate ../../../app/layout.tsx
 {

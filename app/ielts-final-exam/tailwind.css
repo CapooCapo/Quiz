@@ -1,0 +1,125 @@
+/* Tailwind for the IELTS Final Exam product.
+ * Preflight is omitted so existing Wordcraft pages keep their global styles.
+ * Layers are not used on purpose: globals.css has unlayered element rules (button, label, input, main, footer),
+ * and unlayered rules beat every @layer, so utilities must stay unlayered to win on class specificity.
+ * Resets use :where(), which has zero specificity, so every Tailwind utility still overrides them.
+ *
+ * Theme: colours are CSS variables (--fe-*) so one toggle restyles the whole product. The toggle writes
+ * data-theme on <html> and uses the same storage key as Wordcraft ("kotoba-en-theme-v1"), so both stay in sync. */
+@import "tailwindcss/theme.css";
+@import "tailwindcss/utilities.css";
+
+@theme inline {
+  --color-paper: var(--fe-paper);
+  --color-paper-soft: var(--fe-paper-soft);
+  --color-mint: var(--fe-mint);
+  --color-mint-deep: var(--fe-mint-deep);
+  --color-ink: var(--fe-ink);
+  --color-muted: var(--fe-muted);
+  --color-accent: var(--fe-accent);
+  --color-accent-strong: var(--fe-accent-strong);
+  --color-orange: var(--fe-orange);
+  --color-line: var(--fe-line);
+  --color-success: var(--fe-success);
+  --color-success-soft: var(--fe-success-soft);
+  --color-danger: var(--fe-danger);
+  --color-danger-soft: var(--fe-danger-soft);
+
+  --font-display: Manrope, ui-sans-serif, system-ui, sans-serif;
+  --font-body: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Light palette (default). */
+:root {
+  --fe-paper: #fefae0;
+  --fe-paper-soft: #faedcd;
+  --fe-mint: #e9edc9;
+  --fe-mint-deep: #ccd5ae;
+  --fe-ink: #3d2e1f;
+  --fe-muted: #6f634f;
+  --fe-accent: #8b6914;
+  --fe-accent-strong: #6b500f;
+  --fe-orange: #d4a373;
+  --fe-line: #ead9b5;
+  --fe-success: #237a2b;
+  --fe-success-soft: #d8efd0;
+  --fe-danger: #c0271d;
+  --fe-danger-soft: #fbdcd7;
+}
+
+/* Dark palette: follows the system unless the user chose light explicitly. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --fe-paper: #1d1811;
+    --fe-paper-soft: #2a2218;
+    --fe-mint: #2c3820;
+    --fe-mint-deep: #41512f;
+    --fe-ink: #f3ead2;
+    --fe-muted: #bcae8f;
+    --fe-accent: #e3bb55;
+    --fe-accent-strong: #f0cd6a;
+    --fe-orange: #cf9a62;
+    --fe-line: #3d3324;
+    --fe-success: #7fdc91;
+    --fe-success-soft: #1f3b25;
+    --fe-danger: #ff7d6e;
+    --fe-danger-soft: #4a221d;
+  }
+}
+
+/* Explicit dark choice from the toggle wins over the system setting. */
+:root[data-theme='dark'] {
+  --fe-paper: #1d1811;
+  --fe-paper-soft: #2a2218;
+  --fe-mint: #2c3820;
+  --fe-mint-deep: #41512f;
+  --fe-ink: #f3ead2;
+  --fe-muted: #bcae8f;
+  --fe-accent: #e3bb55;
+  --fe-accent-strong: #f0cd6a;
+  --fe-orange: #cf9a62;
+  --fe-line: #3d3324;
+  --fe-success: #7fdc91;
+  --fe-success-soft: #1f3b25;
+  --fe-danger: #ff7d6e;
+  --fe-danger-soft: #4a221d;
+}
+
+:where(.fe-root) {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  line-height: 1.55;
+  min-height: 100vh;
+}
+
+:where(.fe-root) ul,
+:where(.fe-root) ol {
+  margin: 0;
+  padding: 0;
+}
+
+:where(.fe-root) h1,
+:where(.fe-root) h2,
+:where(.fe-root) h3,
+:where(.fe-root) p {
+  margin: 0;
+  max-width: none;
+}
+
+:where(.fe-root) a {
+  color: inherit;
+  text-decoration: none;
+}
+
+:where(.fe-root) button,
+:where(.fe-root) input,
+:where(.fe-root) textarea,
+:where(.fe-root) select {
+  font: inherit;
+  color: inherit;
+}
+
+:where(.fe-root) button:not(:disabled) {
+  cursor: pointer;
+}

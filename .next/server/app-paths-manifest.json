@@ -5,6 +5,9 @@
   "/english/practice/page": "app/english/practice/page.js",
   "/english/quiz-1/page": "app/english/quiz-1/page.js",
   "/english/random/page": "app/english/random/page.js",
+  "/ielts-final-exam/page": "app/ielts-final-exam/page.js",
+  "/ielts-final-exam/reading/[exercise]/page": "app/ielts-final-exam/reading/[exercise]/page.js",
+  "/ielts-final-exam/writing/[id]/page": "app/ielts-final-exam/writing/[id]/page.js",
   "/ielts-writing/page": "app/ielts-writing/page.js",
   "/page": "app/page.js"
 }

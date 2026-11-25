@@ -5,6 +5,9 @@
   "/english/practice/page": "/english/practice",
   "/english/quiz-1/page": "/english/quiz-1",
   "/english/random/page": "/english/random",
+  "/ielts-final-exam/page": "/ielts-final-exam",
+  "/ielts-final-exam/reading/[exercise]/page": "/ielts-final-exam/reading/[exercise]",
+  "/ielts-final-exam/writing/[id]/page": "/ielts-final-exam/writing/[id]",
   "/ielts-writing/page": "/ielts-writing",
   "/page": "/"
 }
