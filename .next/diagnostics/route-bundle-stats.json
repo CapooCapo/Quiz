@@ -1,11 +1,25 @@
 [
   {
     "route": "/ielts-final-exam",
-    "firstLoadUncompressedJsBytes": 585271,
+    "firstLoadUncompressedJsBytes": 652711,
     "firstLoadChunkPaths": [
       ".next/static/chunks/3fntmmi971322.js",
-      ".next/static/chunks/11o_ho-nnoasn.js",
-      ".next/static/chunks/0wfz4v6o8anz7.js",
+      ".next/static/chunks/10ijofi3m3s2a.js",
+      ".next/static/chunks/0f5zxupl5r76e.js",
+      ".next/static/chunks/310vm2bl3xxpt.js",
+      ".next/static/chunks/19mx3mg6lkumu.js",
+      ".next/static/chunks/1rj7ns8rte9vc.js",
+      ".next/static/chunks/2z-e6jheq0ftu.js",
+      ".next/static/chunks/turbopack-1vijxpa2bdysr.js"
+    ]
+  },
+  {
+    "route": "/ielts-final-exam/writing/[id]",
+    "firstLoadUncompressedJsBytes": 528620,
+    "firstLoadChunkPaths": [
+      ".next/static/chunks/3fntmmi971322.js",
+      ".next/static/chunks/31vq-71yt3nes.js",
+      ".next/static/chunks/10ijofi3m3s2a.js",
       ".next/static/chunks/310vm2bl3xxpt.js",
       ".next/static/chunks/19mx3mg6lkumu.js",
       ".next/static/chunks/1rj7ns8rte9vc.js",
@@ -20,20 +34,6 @@
       ".next/static/chunks/3fntmmi971322.js",
       ".next/static/chunks/22i43cg4l4-dq.js",
       ".next/static/chunks/272hovglz_8pm.js",
-      ".next/static/chunks/310vm2bl3xxpt.js",
-      ".next/static/chunks/19mx3mg6lkumu.js",
-      ".next/static/chunks/1rj7ns8rte9vc.js",
-      ".next/static/chunks/2z-e6jheq0ftu.js",
-      ".next/static/chunks/turbopack-1vijxpa2bdysr.js"
-    ]
-  },
-  {
-    "route": "/ielts-final-exam/writing/[id]",
-    "firstLoadUncompressedJsBytes": 524100,
-    "firstLoadChunkPaths": [
-      ".next/static/chunks/3fntmmi971322.js",
-      ".next/static/chunks/37v2-bdwfzow7.js",
-      ".next/static/chunks/11o_ho-nnoasn.js",
       ".next/static/chunks/310vm2bl3xxpt.js",
       ".next/static/chunks/19mx3mg6lkumu.js",
       ".next/static/chunks/1rj7ns8rte9vc.js",

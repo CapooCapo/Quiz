@@ -11,10 +11,10 @@ type FieldKey = 'introduction' | 'overview' | 'body1' | 'body2' | 'conclusion'
 type Drafts = Partial<Record<FieldKey, string>>
 
 const CRITERIA = [
-  { name: 'Task Achievement / Response', checks: ['Trả lời đủ yêu cầu của đề; Task 1 nêu đúng xu hướng và số liệu chính.', 'Quan điểm (Task 2) rõ ràng và giữ nhất quán.'] },
-  { name: 'Coherence & Cohesion', checks: ['Mỗi đoạn có một ý chính rõ ràng.', 'Dùng từ nối phù hợp, không lạm dụng.'] },
-  { name: 'Lexical Resource', checks: ['Dùng từ vựng chính xác, tránh lặp từ.', 'Paraphrase đề bài thay vì chép lại.'] },
-  { name: 'Grammatical Range & Accuracy', checks: ['Kết hợp câu đơn và câu phức chính xác.', 'Kiểm tra thì, số ít/số nhiều và mạo từ.'] },
+  { name: 'Task Achievement (Task 1) / Task Response (Task 2)', checks: ['Đáp ứng đủ yêu cầu đề, đúng định dạng; Task 1 có Overview rõ ràng, Task 2 có lập trường nhất quán.', 'Chọn lọc số liệu hoặc luận điểm chính xác, không lan man.'] },
+  { name: 'Coherence & Cohesion', checks: ['Bố cục mạch lạc, ý tiến triển rõ ràng.', 'Dùng linh hoạt, chính xác từ nối và từ quy chiếu.'] },
+  { name: 'Lexical Resource', checks: ['Từ vựng học thuật đa dạng, dùng đúng collocation.', 'Hạn chế lặp từ nhờ paraphrase; ít lỗi chính tả và từ loại.'] },
+  { name: 'Grammatical Range & Accuracy', checks: ['Kết hợp linh hoạt câu đơn và câu phức.', 'Chia thì đúng theo mốc thời gian của biểu đồ; kiểm soát dấu câu.'] },
 ]
 
 const field = (key: FieldKey, name: string, hint: string) => ({ key, name, hint })

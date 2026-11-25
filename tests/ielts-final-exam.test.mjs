@@ -19,15 +19,18 @@ const transpile = async (path) => {
   return import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`)
 }
 
-const { vocabularyWords, vocabularyTopics } = await transpile('../src/features/ielts-final-exam/data/vocabulary.ts')
+const vocabBase = await transpile('../src/features/ielts-final-exam/data/vocabulary.ts')
+const vocabExtra = await transpile('../src/features/ielts-final-exam/data/vocabularyExtra.ts')
+const vocabularyTopics = vocabBase.vocabularyTopics
+const vocabularyWords = [...vocabBase.baseVocabularyWords, ...vocabExtra.extraVocabularyWords]
 const { speakingTopics } = await transpile('../src/features/ielts-final-exam/data/speaking.ts')
 const pageSource = await readFile(new URL('../app/ielts-final-exam/layout.tsx', import.meta.url), 'utf8')
 const headerSource = await readFile(new URL('../src/features/ielts-final-exam/components/FinalExamHeader.tsx', import.meta.url), 'utf8')
 const listeningSource = await readFile(new URL('../src/features/ielts-final-exam/components/ListeningPanel.tsx', import.meta.url), 'utf8')
 
-test('vocabulary covers all 15 VLU topics with at least 20 words', () => {
-  assert.equal(vocabularyTopics.length, 15)
-  assert.ok(vocabularyWords.length >= 20 && vocabularyWords.length <= 30, `found ${vocabularyWords.length} words`)
+test('vocabulary covers every topic and holds the original words plus the VLU slide list', () => {
+  assert.equal(vocabularyTopics.length, 16)
+  assert.ok(vocabularyWords.length >= 100, `found ${vocabularyWords.length} words`)
   for (const topic of vocabularyTopics) {
     assert.ok(vocabularyWords.some((word) => word.topicId === topic.id), `topic ${topic.id} has no words`)
   }
@@ -100,4 +103,12 @@ test('the product is served at its own route with an IELTS Final Exam header', (
 test('listening is a structure-only page: no audio playback and a 40-minute timer', () => {
   assert.doesNotMatch(listeningSource, /<audio|speechSynthesis|new Audio/)
   assert.match(listeningSource, /CountdownTimer label="Thời gian làm bài" seconds=\{40 \* 60\}/)
+})
+
+test('every vocabulary word has a Vietnamese translation of its example sentence', async () => {
+  const translations = await transpile('../src/features/ielts-final-exam/data/vocabularyExamplesVi.ts')
+  const map = translations.exampleTranslationsVi
+  const missing = vocabularyWords.filter((word) => !map[word.id]).map((word) => word.id)
+  assert.deepEqual(missing, [], 'missing Vietnamese example translations')
+  for (const word of vocabularyWords) assert.match(map[word.id], /[À-ỹ]/u, `${word.id} translation should be Vietnamese`)
 })

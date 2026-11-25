@@ -37,9 +37,10 @@ export const vocabularyTopics: { id: number; name: string }[] = [
   { id: 13, name: 'Shopping and Consumerism' },
   { id: 14, name: 'Fashion and Clothing' },
   { id: 15, name: 'Music and Entertainment' },
+  { id: 16, name: 'Academic Reading Vocabulary (pre-reading)' },
 ]
 
-export const vocabularyWords: VocabularyWord[] = [
+export const baseVocabularyWords: VocabularyWord[] = [
   {
     id: 'vocab-nuclear-family', topicId: 1, word: 'nuclear family', partOfSpeech: 'danh từ (cụm)', ipa: '/ˈnjuːkliər ˈfæməli/',
     meaningVi: 'gia đình hạt nhân (cha mẹ và con cái)', illustration: 'family',
@@ -251,3 +252,4 @@ export const vocabularyWords: VocabularyWord[] = [
     grammar: { sentence: 'The orchestra ___ a new symphony every spring, and tickets sell out quickly.', options: ['performs', 'perform', 'performed', 'performing'], answer: 'performs', explanation: 'Chủ ngữ số ít “The orchestra” đi với động từ thêm -s.' },
   },
 ]
+

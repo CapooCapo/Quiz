@@ -3,7 +3,9 @@
 import { startTransition, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { sampleWithoutReplacement } from '../../quiz-one/logic.mjs'
 import { buildVocabularySession, stageForIndex } from '../logic.mjs'
-import { vocabularyTopics, vocabularyWords, type IllustrationKey, type VocabularyWord } from '../data/vocabulary'
+import { vocabularyTopics, vocabularyWords } from '../data/vocabularyBank'
+import type { IllustrationKey, VocabularyWord } from '../data/vocabulary'
+import { exampleTranslationsVi } from '../data/vocabularyExamplesVi'
 
 export type VocabularyMode = 1 | 2
 
@@ -17,6 +19,9 @@ type Question = {
   choices: string[]
   correct: string
   explanation: string
+  /** Example sentence that uses the word, shown after the answer. */
+  example: string
+  exampleVi: string
 }
 
 type Phase = 'setup' | 'playing' | 'done'
@@ -27,11 +32,18 @@ const SESSION_SIZE = 10
 
 function buildQuestion(word: VocabularyWord, mode: VocabularyMode, stage: 1 | 2, index: number): Question {
   const shuffle = (values: string[]) => sampleWithoutReplacement(values, values.length)
+  // The context sentence with its blank filled in always uses the word, so it works as the example.
+  const exampleVi = exampleTranslationsVi[word.id] ?? ''
+  const example = word.context.sentence.includes('___')
+    ? word.context.sentence.replace('___', word.context.answer)
+    : word.context.sentence
   if (mode === 1 && stage === 1) {
     return {
       index, stage, promptKind: 'vi', promptText: word.meaningVi, promptDetail: `Từ loại: ${word.partOfSpeech}`,
       illustration: word.illustration, choices: shuffle([word.word, ...word.distractorsEn]), correct: word.word,
       explanation: `${word.word} /${word.ipa.replace(/\//g, '')}/ (${word.partOfSpeech}) nghĩa là “${word.meaningVi}”.`,
+      example,
+      exampleVi,
     }
   }
   if (mode === 1) {
@@ -39,6 +51,8 @@ function buildQuestion(word: VocabularyWord, mode: VocabularyMode, stage: 1 | 2,
       index, stage, promptKind: 'en', promptText: word.word, promptDetail: `${word.ipa} · ${word.partOfSpeech}`,
       choices: shuffle([word.meaningVi, ...word.distractorsVi]), correct: word.meaningVi,
       explanation: `${word.word} (${word.partOfSpeech}) nghĩa là “${word.meaningVi}”. Đây là nghĩa đúng trong ngữ cảnh học thuật.`,
+      example,
+      exampleVi,
     }
   }
   const cloze = stage === 1 ? word.context : word.grammar
@@ -47,6 +61,8 @@ function buildQuestion(word: VocabularyWord, mode: VocabularyMode, stage: 1 | 2,
     promptDetail: stage === 1 ? 'Chọn từ phù hợp về nghĩa và ngữ cảnh.' : 'Chọn dạng từ đúng về ngữ pháp.',
     choices: shuffle(cloze.options), correct: cloze.answer,
     explanation: `${cloze.explanation} Từ cần nhớ: ${word.word}.`,
+    example,
+    exampleVi,
   }
 }
 
@@ -316,6 +332,11 @@ export function VocabularyQuiz({ mode }: { mode: VocabularyMode }) {
             {selected === question.correct ? 'Chính xác.' : `Chưa đúng. Đáp án: ${question.correct}.`}
           </p>
           <p className="rounded-lg border border-paper-soft bg-paper px-4 py-3 text-sm leading-relaxed">{question.explanation}</p>
+          <p className="rounded-lg bg-mint px-4 py-3 text-sm leading-relaxed">
+            <span className="font-bold">Ví dụ: </span>
+            <em>{question.example}</em>
+            {question.exampleVi && <span className="mt-1 block text-muted">{question.exampleVi}</span>}
+          </p>
           <button
             type="button"
             onClick={next}
