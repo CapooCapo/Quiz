@@ -174,7 +174,7 @@
       "routeType": "page",
       "response": "complete",
       "compute": "static",
-      "htmlSize": 17798,
+      "htmlSize": 18138,
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -198,39 +198,11 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/ielts-final-exam/reading/completion": {
-      "routeType": "page",
-      "response": "complete",
-      "compute": "static",
-      "htmlSize": 23588,
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/ielts-final-exam/reading/[exercise]",
-      "dataRoute": "/ielts-final-exam/reading/completion.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/ielts-final-exam/reading/matching-headings": {
       "routeType": "page",
       "response": "complete",
       "compute": "static",
-      "htmlSize": 25325,
+      "htmlSize": 31252,
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -254,39 +226,11 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/ielts-final-exam/reading/matching-information": {
-      "routeType": "page",
-      "response": "complete",
-      "compute": "static",
-      "htmlSize": 23659,
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/ielts-final-exam/reading/[exercise]",
-      "dataRoute": "/ielts-final-exam/reading/matching-information.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/ielts-final-exam/reading/multiple-choice": {
       "routeType": "page",
       "response": "complete",
       "compute": "static",
-      "htmlSize": 26298,
+      "htmlSize": 24832,
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -310,11 +254,67 @@
         "x-next-revalidate-tag-token"
       ]
     },
+    "/ielts-final-exam/reading/note-completion": {
+      "routeType": "page",
+      "response": "complete",
+      "compute": "static",
+      "htmlSize": 24939,
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/ielts-final-exam/reading/[exercise]",
+      "dataRoute": "/ielts-final-exam/reading/note-completion.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/ielts-final-exam/reading/sentence-completion": {
+      "routeType": "page",
+      "response": "complete",
+      "compute": "static",
+      "htmlSize": 24196,
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/ielts-final-exam/reading/[exercise]",
+      "dataRoute": "/ielts-final-exam/reading/sentence-completion.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
     "/ielts-final-exam/reading/short-answer": {
       "routeType": "page",
       "response": "complete",
       "compute": "static",
-      "htmlSize": 23114,
+      "htmlSize": 23534,
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -342,7 +342,7 @@
       "routeType": "page",
       "response": "complete",
       "compute": "static",
-      "htmlSize": 23261,
+      "htmlSize": 24087,
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -370,7 +370,7 @@
       "routeType": "page",
       "response": "complete",
       "compute": "static",
-      "htmlSize": 24228,
+      "htmlSize": 24017,
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -394,11 +394,11 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/ielts-final-exam/writing/task1-faculty-table": {
+    "/ielts-final-exam/writing/task1-communication-methods": {
       "routeType": "page",
       "response": "complete",
       "compute": "static",
-      "htmlSize": 23090,
+      "htmlSize": 26705,
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -412,7 +412,35 @@
       ],
       "initialRevalidateSeconds": false,
       "srcRoute": "/ielts-final-exam/writing/[id]",
-      "dataRoute": "/ielts-final-exam/writing/task1-faculty-table.rsc",
+      "dataRoute": "/ielts-final-exam/writing/task1-communication-methods.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/ielts-final-exam/writing/task1-expenditure-pies": {
+      "routeType": "page",
+      "response": "complete",
+      "compute": "static",
+      "htmlSize": 27515,
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/ielts-final-exam/writing/[id]",
+      "dataRoute": "/ielts-final-exam/writing/task1-expenditure-pies.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -426,7 +454,7 @@
       "routeType": "page",
       "response": "complete",
       "compute": "static",
-      "htmlSize": 25598,
+      "htmlSize": 26083,
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -450,11 +478,39 @@
         "x-next-revalidate-tag-token"
       ]
     },
+    "/ielts-final-exam/writing/task1-languages-table": {
+      "routeType": "page",
+      "response": "complete",
+      "compute": "static",
+      "htmlSize": 24202,
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/ielts-final-exam/writing/[id]",
+      "dataRoute": "/ielts-final-exam/writing/task1-languages-table.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
     "/ielts-final-exam/writing/task1-online-learning": {
       "routeType": "page",
       "response": "complete",
       "compute": "static",
-      "htmlSize": 26140,
+      "htmlSize": 26836,
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -478,67 +534,11 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/ielts-final-exam/writing/task1-university-budget": {
-      "routeType": "page",
-      "response": "complete",
-      "compute": "static",
-      "htmlSize": 26696,
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/ielts-final-exam/writing/[id]",
-      "dataRoute": "/ielts-final-exam/writing/task1-university-budget.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
-    "/ielts-final-exam/writing/task1-visitors-cities": {
-      "routeType": "page",
-      "response": "complete",
-      "compute": "static",
-      "htmlSize": 27165,
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/ielts-final-exam/writing/[id]",
-      "dataRoute": "/ielts-final-exam/writing/task1-visitors-cities.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/ielts-final-exam/writing/task2-cooperate-compete": {
       "routeType": "page",
       "response": "complete",
       "compute": "static",
-      "htmlSize": 22034,
+      "htmlSize": 22518,
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -566,7 +566,7 @@
       "routeType": "page",
       "response": "complete",
       "compute": "static",
-      "htmlSize": 21817,
+      "htmlSize": 22269,
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -594,7 +594,7 @@
       "routeType": "page",
       "response": "complete",
       "compute": "static",
-      "htmlSize": 21962,
+      "htmlSize": 22161,
       "experimentalBypassFor": [
         {
           "type": "header",
