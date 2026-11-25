@@ -1,11 +1,1 @@
-{
-  "version": 4,
-  "routes": {},
-  "dynamicRoutes": {},
-  "notFoundRoutes": [],
-  "preview": {
-    "previewModeId": "58e8f907b5030f031c5d1c089579bc80",
-    "previewModeSigningKey": "d39264cdb6b73c06a512f672db3b114723a63556a4a9b21571f738c0769912d8",
-    "previewModeEncryptionKey": "17514ddb593fbbd1c802633a6f4e28b71d22095dd23713bd40321f266c2a4f7f"
-  }
-}
+{"version":4,"routes":{"/ielts-final-exam/reading/completion":{},"/ielts-final-exam/reading/short-answer":{},"/ielts-final-exam/reading/matching-headings":{},"/ielts-final-exam/reading/true-false-not-given":{},"/ielts-final-exam/reading/yes-no-not-given":{},"/ielts-final-exam/reading/matching-information":{},"/ielts-final-exam/reading/multiple-choice":{},"/ielts-final-exam/writing/task1-households-cars":{},"/ielts-final-exam/writing/task1-visitors-cities":{},"/ielts-final-exam/writing/task1-university-budget":{},"/ielts-final-exam/writing/task1-faculty-table":{},"/ielts-final-exam/writing/task1-online-learning":{},"/ielts-final-exam/writing/task2-cooperate-compete":{},"/ielts-final-exam/writing/task2-free-education":{},"/ielts-final-exam/writing/task2-part-time-work":{}},"dynamicRoutes":{"/ielts-final-exam/reading/[exercise]":{"dataRoute":null,"dataRouteRegex":null,"fallback":false,"fallbackRevalidate":false,"fallbackSourceRoute":"/ielts-final-exam/reading/[exercise]","routeRegex":"^\\/ielts\\-final\\-exam\\/reading\\/([^/]+?)(?:\\/)?$","allowHeader":[]},"/ielts-final-exam/writing/[id]":{"dataRoute":null,"dataRouteRegex":null,"fallback":false,"fallbackRevalidate":false,"fallbackSourceRoute":"/ielts-final-exam/writing/[id]","routeRegex":"^\\/ielts\\-final\\-exam\\/writing\\/([^/]+?)(?:\\/)?$","allowHeader":[]}},"notFoundRoutes":[],"preview":{"previewModeId":"9fba7e0953d76e7cecbcd8c7ab2bbb91","previewModeSigningKey":"1640b5dda6292594b0abc582ec02c842805d80c7f41700afb49bc5e0b4496289","previewModeEncryptionKey":"a829862c6ba3c7cf57fffb4dc9f8b80596fc69271caa5bb014530d29baf0af48"}}
